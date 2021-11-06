@@ -4,25 +4,13 @@ import java.sql.*;
 import java.util.Scanner;
 
 public class Home {
-    private static final String jdbcURL = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl01";
-    private static final String user = "rrsallar";
-    private static final String password = "abcd1234";
 
-    public static Connection connection = null;
-    public static Statement statement = null;
-    public static ResultSet result = null;
 
-    public static void main(String[] args) {
+    public static void HomeUi(Connection connection) {
         Scanner sc = new Scanner(System.in);
         int selection = 0;
         try {
-
-            Class.forName("oracle.jdbc.OracleDriver");
-
             try {
-                System.out.println("Inititalizing connection...");
-                connection = DriverManager.getConnection(jdbcURL, user, password);
-                statement = connection.createStatement();
                 do{
                     System.out.println("\t\tHOME\n\n");
                     System.out.println("1. LOGIN");
@@ -33,9 +21,10 @@ public class Home {
                     switch (selection) {
                     case 1:
                         System.out.println("login page");
+                        Login.loginInterface(connection);
                         break;
                     case 2:
-                        System.out.println("Sign up page");
+                        SignUp.SignUpInterface(connection);
                         break;
                     case 3:
                         System.out.println("Show queries");
@@ -49,14 +38,13 @@ public class Home {
                 } while(selection<=0 || selection>4);
             } finally {
                 sc.close();
-                close(result);
-                close(statement);
                 close(connection);
             }
         }
 
-        catch (Throwable oops) {
-            oops.printStackTrace();
+        catch (Exception e) {
+            System.out.println("Failed to connect to DB");
+            e.printStackTrace();
         }
     }
 
@@ -69,22 +57,5 @@ public class Home {
         }
     }
 
-    static void close(Statement statement) {
-        if (statement != null) {
-            try {
-                statement.close();
-            } catch (Throwable whatever) {
-            }
-        }
-    }
-
-    static void close(ResultSet result) {
-        if (result != null) {
-            try {
-                result.close();
-            } catch (Throwable whatever) {
-            }
-        }
-    }
 
 }
