@@ -23,16 +23,20 @@ public class AdminLanding {
                     selection = sc.nextInt();
                     switch (selection) {
                     case 1:
-                        System.out.println("1. Adding Brand");
+                        System.out.println("Adding Brand.....");
+                        SignUp.BrandSignUpUI(conn);
                         break;
                     case 2:
-                        System.out.println("2. Adding Customer");
+                        System.out.println("Adding Customer.....");
+                        SignUp.CustomerSignUpUI(conn);
                         break;
                     case 3:
-                        System.out.println("3. Showing Brand's Info");
+                        System.out.println("Showing Brand's Info.....");
+                        ShowInfo.ShowBrandInfo(conn);
                         break;
                     case 4:
-                        System.out.println("4. Showing Customer's Info");
+                        System.out.println("Showing Customer's Info.......");
+                        ShowInfo.ShowCustomerInfo(conn);
                         break;
                     case 5:
                         System.out.println("5. Adding activity type");
@@ -41,7 +45,7 @@ public class AdminLanding {
                         System.out.println("6. Adding reward type");
                         break;
                     case 7:
-                        System.out.println("7. Logging out");
+                        System.out.println("7. Logging out....");
                         Home.HomeUi(conn);
                         break;    
                     default:

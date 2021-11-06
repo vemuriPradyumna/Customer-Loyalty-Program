@@ -45,6 +45,7 @@ public class Login {
                         break;
                     case "Admin":
                         System.out.println("Admin landing");
+                        AdminLanding.AdminLandingInterface(conn);
                         break;
                     default:
                         System.out.println("Something went wrong...");

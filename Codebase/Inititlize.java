@@ -27,7 +27,7 @@ public class Inititlize {
             e.printStackTrace();
         }
     }
-
+    
     static void close(Connection connection) {
         if (connection != null) {
             try {
