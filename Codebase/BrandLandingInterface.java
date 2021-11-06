@@ -19,9 +19,13 @@ public class BrandLandingInterface {
             sc = new Scanner(System.in);
             do {
                 System.out.println("\t\t BRAND LANDING PAGE\n\n");
-                System.out.println("1. BRAND SIGN UP");
-                System.out.println("2. CUSTOMER SIGN UP ");
-                System.out.println("3. GO BACK");
+                System.out.println("1. Add Loyalty program");
+                System.out.println("2. Add Reward Earning Rules");
+                System.out.println("3. Update Reward Earning Rules");
+                System.out.println("4. Add Reward Redemption rules");
+                System.out.println("5. Update Reward Redemption rules");
+                System.out.println("6. Validate Loyalty Program");
+                System.out.println("7. Log out");
                 selection = sc.nextInt();
                 sc.nextLine();
                 switch (selection) {
