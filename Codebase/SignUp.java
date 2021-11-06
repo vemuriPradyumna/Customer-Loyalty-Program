@@ -32,10 +32,10 @@ public class SignUp {
                 sc.nextLine();
                 switch (selection) {
                 case 1:
-                    BrandSignUpUI();
+                    BrandSignUpUI(conn);
                     break;
                 case 2:
-                    CustomerSignUpUI();
+                    CustomerSignUpUI(conn);
                     break;
                 case 3:
                     Home.HomeUi(conn);
@@ -54,7 +54,8 @@ public class SignUp {
         }
     }
 
-    static void BrandSignUpUI () throws SQLException{
+    static void BrandSignUpUI (Connection conn) throws SQLException{
+        SignUp.conn = conn;
         String userId = null;
         System.out.println("\t\t BRAND SIGN UP \n\n");
         System.out.println();
@@ -94,7 +95,8 @@ public class SignUp {
         }
     }
 
-    static void CustomerSignUpUI() throws SQLException, ParseException{
+    static void CustomerSignUpUI(Connection conn) throws SQLException, ParseException{
+        SignUp.conn = conn;
         String userId = null;
         System.out.println("\t\t CUSTOMER SIGN UP \n\n");
                     System.out.println();
