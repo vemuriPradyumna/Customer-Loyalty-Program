@@ -31,11 +31,24 @@ public class Login {
                     result = statement.executeQuery(sqlCred);
                     firstCheck = true;
                 } while (!result.next());
-                String customerName = result.getString("CUSTOMER_NAME");
-                String customerId = result.getString("CUSTOMER_ID");
-                System.out.println(customerId+" Login successful!  \n");
-                System.out.println("Welcome "+customerName);
-    
+                String userId = result.getString("USER_ID");
+                String userType = result.getString("USER_TYPE");
+                System.out.println(userId+" Login successful!  \n");
+                System.out.println("Welcome "+userType);
+                
+                switch (userType) {
+                    case "Customer":
+                        System.out.println("Customer landing");
+                        break;
+                    case "Brand":
+                        System.out.println("Brand landing");
+                        break;
+                    case "Admin":
+                        System.out.println("Admin landing");
+                        break;
+                    default:
+                        System.out.println("Something went wrong...");
+                    }
 
             } catch (Exception e){
                 e.printStackTrace();
