@@ -31,6 +31,7 @@ public class Home {
                         break;
                     case 4:
                         System.out.println("Exiting...");
+                        System.exit(0);
                         break;
                     default:
                         System.out.println("You have entered an incorrect selection try again");
