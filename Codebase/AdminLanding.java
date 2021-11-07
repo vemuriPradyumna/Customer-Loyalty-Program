@@ -21,6 +21,7 @@ public class AdminLanding {
                     System.out.println("6. Add reward type");
                     System.out.println("7. Logout");
                     selection = sc.nextInt();
+                    sc.nextLine();
                     switch (selection) {
                     case 1:
                         System.out.println("Adding Brand.....");

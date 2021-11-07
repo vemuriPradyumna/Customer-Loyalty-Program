@@ -37,7 +37,7 @@ public class Login {
                 System.out.println("Welcome "+userType);
                 
                 LoggedInUser loggedInUser = new LoggedInUser(userId, userType);
-                
+
                 switch (userType) {
                     case "Customer":
                         System.out.println("Customer landing\n\n");
@@ -45,6 +45,7 @@ public class Login {
                         break;
                     case "Brand":
                         System.out.println("Brand landing");
+                        BrandLandingInterface.BrandUi(conn, loggedInUser);
                         break;
                     case "Admin":
                         System.out.println("Admin landing\n\n");

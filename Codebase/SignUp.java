@@ -23,6 +23,7 @@ public class SignUp {
             statement = conn.createStatement();
             int selection = 0;
             sc = new Scanner(System.in);
+            boolean flag = true;
             do {
                 System.out.println("\t\t SIGN UP \n\n");
                 System.out.println("1. BRAND SIGN UP");
@@ -38,17 +39,17 @@ public class SignUp {
                     CustomerSignUpUI(conn);
                     break;
                 case 3:
-                    Home.HomeUi(conn);
+                    System.out.println("Going Back...");
+                    flag = false;
                     break;
                 default:
                     System.out.println("You have entered an incorrect selection try again");
                 }
-            } while (true);
+            } while (flag);
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            close(sc);
             close(result);
             close(statement);
         }
