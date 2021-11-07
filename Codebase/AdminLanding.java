@@ -5,9 +5,17 @@ import java.util.Scanner;
 
 public class AdminLanding {
     
+    public static Statement statement = null;
+    public static ResultSet result = null;
+    public static Scanner sc = null;
+    public static Connection conn = null;
+
     public static void AdminLandingInterface(Connection conn){
+
+        AdminLanding.conn = conn;
         Scanner sc = new Scanner(System.in);
         int selection = 0;
+        boolean main_flag = true;
         try {
             try {
                 do{
@@ -16,11 +24,11 @@ public class AdminLanding {
                     System.out.println("2. Add Customer");
                     System.out.println("3. Show Brand's Info");
                     System.out.println("4. Show Customer's Info");
-                    System.out.println("4. Show Customer's Info");
                     System.out.println("5. Add activity type");
                     System.out.println("6. Add reward type");
                     System.out.println("7. Logout");
                     selection = sc.nextInt();
+                    sc.nextLine();
                     switch (selection) {
                     case 1:
                         System.out.println("Adding Brand.....");
@@ -46,14 +54,13 @@ public class AdminLanding {
                         break;
                     case 7:
                         System.out.println("Logging out....");
-                        Home.HomeUi(conn);
+                        main_flag = false;
                         break;    
                     default:
                         System.out.println("You have entered an incorrect selection try again");
                     }
-                } while(selection<=0 || selection>7);
+                } while(main_flag);
             } finally {
-                sc.close();
                 close(conn);
             }
         }

@@ -13,10 +13,9 @@ public class ViewWallet {
     static void ViewWalletInterface (Connection conn, LoggedInUser loggedInUser) throws SQLException{
 
         int selection = 0;
+        boolean flag = true;
         try {
             
-            
-                System.out.println("\n1. Show Wallet and go back\n");
                 statement = conn.createStatement();
                 System.out.println("\t\t WALLET DISPLAY for current user \n");
 
@@ -29,18 +28,19 @@ public class ViewWallet {
            
                         }
 
+                System.out.println("\n1. Go back\n");
                 selection = sc.nextInt();
                 sc.nextLine();                
         do{
                 switch (selection) {
                     case 1:
-                        CustomerLanding.CustomerLandingInterface(conn, loggedInUser);
+                        flag = false;
                         break;
     
                     default:
                         System.out.println("You have entered an incorrect selection try again");
                     }
-        }while(true);
+        }while(flag);
     }catch (Exception e) {
         e.printStackTrace();
     } finally {
