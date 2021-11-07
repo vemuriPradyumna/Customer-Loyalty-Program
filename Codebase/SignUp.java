@@ -107,7 +107,6 @@ public class SignUp {
                             System.out.println("Customer ID already exists \nPlease select a new one\n\n");
                         }
                         System.out.println("Choose your username: \n");
-                        sc.nextLine();
                         userId = sc.nextLine();
                         String sql_check = "Select user_id from market_place where user_id= '"+userId+"'";
                         // System.out.println(sqlCred);
