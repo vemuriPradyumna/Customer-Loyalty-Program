@@ -40,13 +40,14 @@ public class Login {
                 
                 switch (userType) {
                     case "Customer":
-                        System.out.println("Customer landing");
+                        System.out.println("Customer landing\n\n");
+                        CustomerLanding.CustomerLandingInterface(conn);
                         break;
                     case "Brand":
                         System.out.println("Brand landing");
                         break;
                     case "Admin":
-                        System.out.println("Admin landing");
+                        System.out.println("Admin landing\n\n");
                         AdminLanding.AdminLandingInterface(conn);
                         break;
                     default:

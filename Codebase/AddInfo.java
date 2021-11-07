@@ -3,20 +3,21 @@ package Codebase;
 import java.sql.*;
 import java.util.Scanner;
 
-public class ShowInfo {
-
+public class AddInfo {
+    
     public static Statement statement = null;
     public static ResultSet result = null;
+    public static ResultSet result1 = null;
     public static Scanner sc = new Scanner(System.in);
     public static Connection conn = null;
 
-    static void ShowBrandInfo (Connection conn) throws SQLException{
+    static void addActivityType (Connection conn) throws SQLException{
         
         int selection = 0;
         try {
         do{
         
-            System.out.println("\n1. ShowbrandInfo\n");
+            System.out.println("\n1. Add Activity Type\n");
             System.out.println("\n2. GO BACK\n");
             selection = sc.nextInt();
             sc.nextLine();
@@ -24,19 +25,24 @@ public class ShowInfo {
             switch (selection) {
                 case 1:
                     SignUp.conn = conn;
-                    String BrandId = null;
+                    String actCode = null;
+                    String actName = null;
                     statement = conn.createStatement();
-                    System.out.println("\t\t BRAND DISPLAY \n");
+                    System.out.println("\t\t Add Activity Type \n");
                     System.out.println();
        
-                    System.out.println("Enter Brand Id: \n");
-                    BrandId = sc.nextLine();
-                    String sql_check = "Select * from brand where brand_id= '"+BrandId+"'";
+                    System.out.println("Enter Activity Type code: \n");
+                    actCode = sc.nextLine();
+                    System.out.println("Enter Activity Name: \n");
+                    actName = sc.nextLine();
+                    String sql_check = "INSERT INTO activities(act_cat_code, act_name) VALUES ('"+actCode+"','"+actName+"')";
                     result = statement.executeQuery(sql_check);
+                    
+                    result1 = statement.executeQuery("SELECT * FROM activities WHERE act_cat_code = '"+actCode+"' AND act_name = '"+actName+"'");
+                    System.out.println("\nThe new activity has been added!\n");
+                    while (result1.next()){
        
-                    while (result.next()){
-       
-                        System.out.println("\nBrand ID : "+result.getString("brand_id")+"\n"+"Brand Name : "+result.getString("brand_name")+"\n"+"Join date : "+result.getString("join_date")+"\n"+"Address : "+result.getString("address")+"\n"+"Loyalty Program Code : "+result.getString("lp_code")+"\n"+"Loyalty Program Name : "+result.getString("lp_name")+"\n"+"Tier 1 : "+result.getString("tier1")+"\n"+"Tier 2 : "+result.getString("tier2")+"\n"+"Tier 3 : "+result.getString("tier3")+"\n"+"Multiplier for Tier 1 : "+result.getString("mult1")+"\n"+"Multiplier for Tier 2 : "+result.getString("mult2")+"\n"+"Multiplier for Tier 3 : "+result.getString("mult3")+"\n"+"Points required for Tier 1 : "+result.getString("points_req_tier1")+"\n"+"Points required for Tier 2 : "+result.getString("points_req_tier2")+"\n"+"Points required for Tier 3 : "+result.getString("points_req_tier3"));
+                        System.out.println("\nActivity Type Code : "+result1.getString("act_cat_code")+"\n"+"Activity Name : "+result1.getString("act_name")+"\n");
        
                     }
                     break;
@@ -53,6 +59,7 @@ public class ShowInfo {
     }while(true);
 }catch (Exception e) {
     e.printStackTrace();
+    e.getMessage();
 } finally {
     close(sc);
     close(result);
@@ -61,13 +68,13 @@ public class ShowInfo {
 
 }
 
-static void ShowCustomerInfo (Connection conn) throws SQLException{
+static void addRewardType (Connection conn) throws SQLException{
         
     int selection = 0;
     try {
     do{
     
-        System.out.println("\n1. ShowCustomerInfo\n");
+        System.out.println("\n1. Add Reward Type\n");
         System.out.println("\n2. GO BACK\n");
         selection = sc.nextInt();
         sc.nextLine();
@@ -75,19 +82,24 @@ static void ShowCustomerInfo (Connection conn) throws SQLException{
         switch (selection) {
             case 1:
                 SignUp.conn = conn;
-                String CustomerId = null;
+                String rewCode = null;
+                String rewName = null;
                 statement = conn.createStatement();
-                System.out.println("\t\t CUSTOMER DISPLAY \n");
+                System.out.println("\t\t Add Reward Type \n");
                 System.out.println();
    
-                System.out.println("Enter Customer Id: \n");
-                CustomerId = sc.nextLine();
-                String sql_check = "Select * from customer where customer_id= '"+CustomerId+"'";
+                System.out.println("Enter Reward Type code: \n");
+                rewCode = sc.nextLine();
+                System.out.println("Enter Reward Name: \n");
+                rewName = sc.nextLine();
+                String sql_check = "INSERT INTO reward_type(reward_cat_code, reward_name) VALUES ('"+rewCode+"','"+rewName+"')";
                 result = statement.executeQuery(sql_check);
+                
+                result1 = statement.executeQuery("SELECT * FROM reward_type WHERE reward_cat_code = '"+rewCode+"' AND reward_name = '"+rewName+"'");
+                System.out.println("\nThe new reward has been added!\n");
+                while (result1.next()){
    
-                while (result.next()){
-   
-                    System.out.println("\nCustomer ID : "+result.getString("customer_id")+"\n"+"Customer Name : "+result.getString("customer_name")+"\n"+"Address : "+result.getString("address")+"\n"+"Phone number : "+result.getString("phno")+"\n"+"Wallet ID : "+result.getString("wallet_id")+"\n");
+                    System.out.println("\nReward Type Code : "+result1.getString("reward_cat_code")+"\n"+"Reward Name : "+result1.getString("reward_name")+"\n");
    
                 }
                 break;
@@ -104,6 +116,7 @@ static void ShowCustomerInfo (Connection conn) throws SQLException{
 }while(true);
 }catch (Exception e) {
 e.printStackTrace();
+e.getMessage();
 } finally {
 close(sc);
 close(result);
@@ -139,5 +152,7 @@ static void close(ResultSet result) {
         }
     }
 }
+
+
 
 }
