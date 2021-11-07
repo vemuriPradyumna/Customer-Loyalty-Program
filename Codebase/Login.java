@@ -36,6 +36,8 @@ public class Login {
                 System.out.println(userId+" Login successful!  \n");
                 System.out.println("Welcome "+userType);
                 
+                LoggedInUser loggedInUser = new LoggedInUser(userId, userType);
+                
                 switch (userType) {
                     case "Customer":
                         System.out.println("Customer landing\n\n");
