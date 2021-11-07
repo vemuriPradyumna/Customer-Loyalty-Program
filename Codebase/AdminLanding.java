@@ -11,7 +11,7 @@ public class AdminLanding {
         try {
             try {
                 do{
-                    System.out.println("\t\tHOME\n\n");
+                    System.out.println("\t\tADMIN LANDING PAGE\n\n");
                     System.out.println("1. Add Brand");
                     System.out.println("2. Add Customer");
                     System.out.println("3. Show Brand's Info");
