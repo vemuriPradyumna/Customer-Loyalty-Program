@@ -9,10 +9,10 @@ import java.util.Date;
 
 
 public class SignUp {
+    public static Connection conn = null;
     public static Statement statement = null;
     public static ResultSet result = null;
-    public static Scanner sc = null;
-    public static Connection conn = null;
+    public static Scanner sc = new Scanner(System.in);
     public static boolean firstCheck = false;
     public static Calendar calendar = Calendar.getInstance();
     public static Date currentTime;
@@ -22,7 +22,7 @@ public class SignUp {
             SignUp.conn = conn;
             statement = conn.createStatement();
             int selection = 0;
-            sc = new Scanner(System.in);
+            boolean flag = true;
             do {
                 System.out.println("\t\t SIGN UP \n\n");
                 System.out.println("1. BRAND SIGN UP");
@@ -38,17 +38,17 @@ public class SignUp {
                     CustomerSignUpUI(conn);
                     break;
                 case 3:
-                    Home.HomeUi(conn);
+                    System.out.println("Going out...");
+                    flag = false;
                     break;
                 default:
                     System.out.println("You have entered an incorrect selection try again");
                 }
-            } while (true);
+            } while (flag);
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            close(sc);
             close(result);
             close(statement);
         }
@@ -56,6 +56,7 @@ public class SignUp {
 
     static void BrandSignUpUI (Connection conn) throws SQLException{
         SignUp.conn = conn;
+        SignUp.statement = conn.createStatement();
         String userId = null;
         System.out.println("\t\t BRAND SIGN UP \n\n");
         System.out.println();

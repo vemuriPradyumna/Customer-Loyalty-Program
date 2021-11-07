@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class CustomerLanding {
     
-    public static void CustomerLandingInterface(Connection conn){
+    public static void CustomerLandingInterface(Connection conn, LoggedInUser loggedInUser){
 
         Scanner sc = new Scanner(System.in);
         int selection = 0;
@@ -29,6 +29,7 @@ public class CustomerLanding {
                         break;
                     case 3:
                         System.out.println("View Wallet....");
+                        ViewWallet.ViewWalletInterface(conn, loggedInUser);
                         break;
                     case 4:
                         System.out.println("Redeem points.......");

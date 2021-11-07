@@ -9,6 +9,7 @@ public class Home {
     public static void HomeUi(Connection connection) {
         Scanner sc = new Scanner(System.in);
         int selection = 0;
+        boolean flag = true;
         try {
             try {
                 do{
@@ -31,14 +32,13 @@ public class Home {
                         break;
                     case 4:
                         System.out.println("Exiting...");
-                        System.exit(0);
+                        flag = false;
                         break;
                     default:
                         System.out.println("You have entered an incorrect selection try again");
                     }
-                } while(selection<=0 || selection>4);
+                } while(flag);
             } finally {
-                sc.close();
                 close(connection);
             }
         }

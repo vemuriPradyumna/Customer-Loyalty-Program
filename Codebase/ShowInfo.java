@@ -54,7 +54,6 @@ public class ShowInfo {
 }catch (Exception e) {
     e.printStackTrace();
 } finally {
-    close(sc);
     close(result);
     close(statement);
 }
@@ -105,7 +104,6 @@ static void ShowCustomerInfo (Connection conn) throws SQLException{
 }catch (Exception e) {
 e.printStackTrace();
 } finally {
-close(sc);
 close(result);
 close(statement);
 }

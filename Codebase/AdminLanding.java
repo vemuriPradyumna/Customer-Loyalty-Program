@@ -24,11 +24,9 @@ public class AdminLanding {
                     switch (selection) {
                     case 1:
                         System.out.println("Adding Brand.....");
-                        SignUp.BrandSignUpUI(conn);
                         break;
                     case 2:
                         System.out.println("Adding Customer.....");
-                        SignUp.CustomerSignUpUI(conn);
                         break;
                     case 3:
                         System.out.println("Showing Brand's Info.....");

@@ -41,7 +41,7 @@ public class Login {
                 switch (userType) {
                     case "Customer":
                         System.out.println("Customer landing\n\n");
-                        CustomerLanding.CustomerLandingInterface(conn);
+                        CustomerLanding.CustomerLandingInterface(conn, loggedInUser);
                         break;
                     case "Brand":
                         System.out.println("Brand landing");

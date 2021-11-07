@@ -58,7 +58,6 @@ public class BrandLandingInterface {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            close(sc);
             close(result);
             close(statement);
         }
