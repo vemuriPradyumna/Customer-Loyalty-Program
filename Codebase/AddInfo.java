@@ -61,7 +61,6 @@ public class AddInfo {
     e.printStackTrace();
     e.getMessage();
 } finally {
-    close(sc);
     close(result);
     close(statement);
 }
@@ -118,7 +117,6 @@ static void addRewardType (Connection conn) throws SQLException{
 e.printStackTrace();
 e.getMessage();
 } finally {
-close(sc);
 close(result);
 close(statement);
 }

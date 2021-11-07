@@ -9,10 +9,10 @@ import java.util.Date;
 
 
 public class SignUp {
+    public static Connection conn = null;
     public static Statement statement = null;
     public static ResultSet result = null;
-    public static Scanner sc = null;
-    public static Connection conn = null;
+    public static Scanner sc = new Scanner(System.in);
     public static boolean firstCheck = false;
     public static Calendar calendar = Calendar.getInstance();
     public static Date currentTime;
@@ -22,7 +22,6 @@ public class SignUp {
             SignUp.conn = conn;
             statement = conn.createStatement();
             int selection = 0;
-            sc = new Scanner(System.in);
             boolean flag = true;
             do {
                 System.out.println("\t\t SIGN UP \n\n");
@@ -39,7 +38,7 @@ public class SignUp {
                     CustomerSignUpUI(conn);
                     break;
                 case 3:
-                    System.out.println("Going Back...");
+                    System.out.println("Going out...");
                     flag = false;
                     break;
                 default:
@@ -57,6 +56,7 @@ public class SignUp {
 
     static void BrandSignUpUI (Connection conn) throws SQLException{
         SignUp.conn = conn;
+        SignUp.statement = conn.createStatement();
         String userId = null;
         System.out.println("\t\t BRAND SIGN UP \n\n");
         System.out.println();
@@ -107,7 +107,6 @@ public class SignUp {
                             System.out.println("Customer ID already exists \nPlease select a new one\n\n");
                         }
                         System.out.println("Choose your username: \n");
-                        sc.nextLine();
                         userId = sc.nextLine();
                         String sql_check = "Select user_id from market_place where user_id= '"+userId+"'";
                         // System.out.println(sqlCred);

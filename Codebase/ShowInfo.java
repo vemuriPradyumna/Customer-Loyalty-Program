@@ -13,6 +13,8 @@ public class ShowInfo {
     static void ShowBrandInfo (Connection conn) throws SQLException{
         
         int selection = 0;
+        sc = new Scanner(System.in);
+        boolean flag = true;
         try {
         do{
         
@@ -20,7 +22,6 @@ public class ShowInfo {
             System.out.println("\n2. GO BACK\n");
             selection = sc.nextInt();
             sc.nextLine();
-
             switch (selection) {
                 case 1:
                     SignUp.conn = conn;
@@ -41,7 +42,8 @@ public class ShowInfo {
                     }
                     break;
                 case 2:
-                    AdminLanding.AdminLandingInterface(conn);
+                    //AdminLanding.AdminLandingInterface(conn);
+                    flag =false;
                     break;
 
                 default:
@@ -50,11 +52,10 @@ public class ShowInfo {
 
         
     
-    }while(true);
+    }while(flag);
 }catch (Exception e) {
     e.printStackTrace();
 } finally {
-    close(sc);
     close(result);
     close(statement);
 }
@@ -64,6 +65,8 @@ public class ShowInfo {
 static void ShowCustomerInfo (Connection conn) throws SQLException{
         
     int selection = 0;
+    sc = new Scanner(System.in);
+    boolean flag1 = true;
     try {
     do{
     
@@ -92,7 +95,8 @@ static void ShowCustomerInfo (Connection conn) throws SQLException{
                 }
                 break;
             case 2:
-                AdminLanding.AdminLandingInterface(conn);
+                //AdminLanding.AdminLandingInterface(conn);
+                flag1 = false;
                 break;
 
             default:
@@ -101,11 +105,10 @@ static void ShowCustomerInfo (Connection conn) throws SQLException{
 
     
 
-}while(true);
+}while(flag1);
 }catch (Exception e) {
 e.printStackTrace();
 } finally {
-close(sc);
 close(result);
 close(statement);
 }

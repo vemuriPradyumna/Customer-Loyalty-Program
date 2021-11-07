@@ -39,11 +39,7 @@ public class Home {
                         System.out.println("You have entered an incorrect selection try again");
                     }
                 } while(flag);
-            } catch(Exception e){
-                e.printStackTrace();
-            }
-             finally {
-                sc.close();
+            } finally {
                 close(connection);
             }
         }
