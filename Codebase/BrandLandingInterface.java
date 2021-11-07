@@ -30,7 +30,7 @@ public class BrandLandingInterface {
                 sc.nextLine();
                 switch (selection) {
                 case 1:
-                    System.out.println("");
+                    addLoyaltyProgram();
                     break;
                 case 2:
                     System.out.println("");
@@ -64,6 +64,39 @@ public class BrandLandingInterface {
         }
 
    
+    }
+    static void addLoyaltyProgram(){
+            int selection = 0;
+            do {
+                System.out.println("\t\t ADD LOYALTY PROGRAM\n\n");
+                System.out.println("1. Regular");
+                System.out.println("2. Tier");
+                System.out.println("3. Go Back");
+                selection = sc.nextInt();
+                sc.nextLine();
+                switch (selection) {
+                case 1:
+                    // System.out.println("");
+                    addRegularLoyalty();
+                    break;
+                case 2:
+                    addTieredLoyalty();
+                    break;
+                case 3:
+                    System.out.println("Going back...");
+                    break;
+                default:
+                    System.out.println("You have entered an incorrect selection try again");
+                }
+            } while (true);
+    }
+
+    static void addRegularLoyalty(){
+        
+    }
+
+    static void addTieredLoyalty(){
+        
     }
 
     static void close(Scanner sc) {
