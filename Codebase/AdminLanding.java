@@ -39,13 +39,15 @@ public class AdminLanding {
                         ShowInfo.ShowCustomerInfo(conn);
                         break;
                     case 5:
-                        System.out.println("5. Adding activity type");
+                        System.out.println("Adding activity type.........");
+                        AddInfo.addActivityType(conn);
                         break;
                     case 6:
-                        System.out.println("6. Adding reward type");
+                        System.out.println("Adding reward type.......");
+                        AddInfo.addRewardType(conn);
                         break;
                     case 7:
-                        System.out.println("7. Logging out....");
+                        System.out.println("Logging out....");
                         Home.HomeUi(conn);
                         break;    
                     default:
