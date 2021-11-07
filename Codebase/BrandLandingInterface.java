@@ -67,6 +67,7 @@ public class BrandLandingInterface {
     }
     static void addLoyaltyProgram(){
             int selection = 0;
+            boolean flag = true;
             do {
                 System.out.println("\t\t ADD LOYALTY PROGRAM\n\n");
                 System.out.println("1. Regular");
@@ -84,19 +85,167 @@ public class BrandLandingInterface {
                     break;
                 case 3:
                     System.out.println("Going back...");
+                    flag = false;
                     break;
                 default:
                     System.out.println("You have entered an incorrect selection try again");
                 }
-            } while (true);
+            } while (flag);
     }
 
     static void addRegularLoyalty(){
-        
+        int selection = 0;
+        boolean flag = true;
+        do {
+            System.out.println("\t\t ADD REGULAR LOYALTY PROGRAM\n\n");
+            System.out.println("1. Activity Types");
+            System.out.println("2. Reward Types");
+            System.out.println("3. Go Back");
+            selection = sc.nextInt();
+            sc.nextLine();
+            switch (selection) {
+            case 1:
+                // System.out.println("");
+                addRegularLoyalty();
+                break;
+            case 2:
+                addTieredLoyalty();
+                break;
+            case 3:
+                System.out.println("Going back...");
+                flag = false;
+                break;
+            default:
+                System.out.println("You have entered an incorrect selection try again");
+            }
+        } while (flag);
     }
 
     static void addTieredLoyalty(){
-        
+        int selection = 0;
+        boolean flag = true;
+        do {
+            System.out.println("\t\t ADD REGULAR LOYALTY PROGRAM\n\n");
+            System.out.println("1. Tier Set up");
+            System.out.println("2. Activity Types");
+            System.out.println("3. Reward Types");
+            System.out.println("4. Go Back");
+            selection = sc.nextInt();
+            sc.nextLine();
+            switch (selection) {
+            case 1:
+                tierSetup();
+                break;
+            case 2:
+                addActivityTypes();
+                break;
+            case 3:
+                addRewardTypes();
+                break;
+            case 4:
+                System.out.println("Going back...");
+                flag = false;
+                break;
+            default:
+                System.out.println("You have entered an incorrect selection try again");
+            }
+        } while (flag);
+    }
+
+    static void addActivityTypes(){
+        int selection = 0;
+        boolean flag = true;
+        do {
+            System.out.println("\t\t ADD ACTIVITY TYPE\n\n");
+            System.out.println("1. Purchase");
+            System.out.println("2. Leave a Review");
+            System.out.println("3. Refer a friend");
+            System.out.println("4. Go Back");
+            selection = sc.nextInt();
+            sc.nextLine();
+            switch (selection) {
+            case 1:
+                System.out.println("Added purchase activity to brand loyalty program");
+                break;
+            case 2:
+                System.out.println("Added leave a review activity to brand loyalty program");
+                break;
+            case 3:
+                System.out.println("Added refer a friend activity to Program");
+                flag = false;
+                break;
+            case 4:
+                System.out.println("Going back..");
+                flag = false;
+                break;
+            default:
+                System.out.println("You have entered an incorrect selection try again");
+            }
+        } while (flag);
+    }
+
+    static void addRewardTypes(){
+        int selection = 0;
+        boolean flag = true;
+        do {
+            System.out.println("\t\t ADD REWARD TYPE\n\n");
+            System.out.println("1. Gift Card");
+            System.out.println("2. Free Product");
+            System.out.println("3. Go Back");
+            selection = sc.nextInt();
+            sc.nextLine();
+            switch (selection) {
+            case 1:
+                // System.out.println("");
+                addRegularLoyalty();
+                break;
+            case 2:
+                addTieredLoyalty();
+                break;
+            case 3:
+                System.out.println("Going back...");
+                flag = false;
+                break;
+            default:
+                System.out.println("You have entered an incorrect selection try again");
+            }
+        } while (flag);
+    }
+
+    static void tierSetup(){
+        int selection = 0;
+        boolean flag = true;
+        do {
+            System.out.println("\t\t TIER SETUP MENU\n\n");
+            System.out.println("1. Setup");
+            System.out.println("2. Go Back");
+            selection = sc.nextInt();
+            sc.nextLine();
+            switch (selection) {
+            case 1:
+                setupProcess();
+                break;
+            case 2:
+                System.out.println("Going back...");
+                flag = false;
+                break;
+            default:
+                System.out.println("You have entered an incorrect selection try again");
+            }
+        } while (flag);
+    }
+
+    static void setupProcess(){
+        System.out.println("How many tiers whould you like to have in your loyalty program?");
+        int tierNum = sc.nextInt();
+        sc.nextLine();
+        String[] tierNames = new String[3];
+        String[] multiplier  = new String[3];
+        String[] pointers = new String[3];
+        for(int i=0;i<tierNum;i++){
+            System.out.println("Enter the name of tier "+i+1);
+            tierNames[i] = sc.nextLine();
+        }
     }
 
     static void close(Scanner sc) {
