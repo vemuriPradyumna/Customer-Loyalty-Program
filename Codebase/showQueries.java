@@ -14,7 +14,7 @@ public class showQueries {
     public static Scanner sc = null;
     public static Connection conn = null;
 
-    public static void queryLandingInterface(Connection conn, LoggedInUser loggedInUser){
+    public static void queryLandingInterface(Connection conn){
 
     showQueries.conn = conn;
     Scanner sc = new Scanner(System.in);
@@ -24,7 +24,7 @@ public class showQueries {
     try {
         try {
             do{
-                System.out.println("\t\tADMIN LANDING PAGE\n\n");
+                System.out.println("\n\nSTORED QUERIES\n\n");
                 System.out.println("1. List all customers that are not part of Brand02’s program.");
                 System.out.println("2. List customers that have joined a loyalty program but have not participated in any activity in that program (list the customerid and the loyalty program id).");
                 System.out.println("3. List the rewards that are part of Brand01 loyalty program.");
@@ -39,6 +39,7 @@ public class showQueries {
                 switch (selection) {
                 case 1:
                     System.out.println("List all customers that are not part of Brand02’s program.");
+                    Query1(showQueries.conn);
                     break;
                 case 2:
                     System.out.println("List customers that have joined a loyalty program but have not participated in any activity in that program.");
@@ -70,7 +71,7 @@ public class showQueries {
                 }
             } while(main_flag);
         } finally {
-            close(conn);
+            close(showQueries.conn);
         }
     }
 
@@ -78,6 +79,18 @@ public class showQueries {
         System.out.println("Failed to connect to DB");
         e.printStackTrace();
     }
+    }
+
+
+    public static void Query1(Connection conn) throws SQLException{
+
+        sc = new Scanner(System.in);
+        showQueries.statement = conn.createStatement();
+        String sql = "SELECT DISTINCT customer_name FROM customer MINUS (SELECT DISTINCT customer_name FROM customer WHERE wallet_id IN (SELECT C.wallet_id FROM cust_wallet C, brand B WHERE C.lp_code = B.lp_code AND brand_id = 'Brand02'))";
+        result = statement.executeQuery(sql);
+        while(result.next()){
+            System.out.println(result.getString("customer_name"));
+        }
     }
 
     static void close(Connection connection) {
