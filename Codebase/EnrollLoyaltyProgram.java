@@ -3,6 +3,8 @@ package Codebase;
 import java.sql.*;
 import java.util.Scanner;
 
+import Codebase.POJO.LoggedInUser;
+
 public class EnrollLoyaltyProgram {
     
     public static Statement statement = null;

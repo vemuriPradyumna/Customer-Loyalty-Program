@@ -3,7 +3,10 @@ import java.sql.*;
 import java.text.ParseException;
 import java.util.Scanner;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import Codebase.POJO.Activity;
+import Codebase.POJO.LoggedInUser;
 import Codebase.POJO.Reward;
 
 import java.util.ArrayList;
@@ -203,7 +206,7 @@ public class BrandLandingInterface {
                 reward = new Reward(result.getString("REWARD_CAT_CODE"), result.getString("REWARD_NAME"));
                 rewards.add(reward);
             }
-            System.out.println("\t\t ADD ACTIVITY TYPE\n\n");
+            System.out.println("\t\t ADD REWARD TYPE\n\n");
             for(int i = 0;i<rewards.size();i++){
                 System.out.println(i+1+". "+rewards.get(i).getRewardName());
             }
@@ -220,7 +223,7 @@ public class BrandLandingInterface {
         } while (flag);
     }
 
-    static void tierSetup(){
+    static void tierSetup() throws SQLException{
         int selection = 0;
         boolean flag = true;
         do {
@@ -243,24 +246,73 @@ public class BrandLandingInterface {
         } while (flag);
     }
 
-    static void setupProcess(){
+    static void setupProcess() throws SQLException{
+        System.out.println("What would you like to name your Loyalty program?");
+        String lpName = sc.nextLine();
+        String lpCode = null;
+        Boolean firstCheck = false;
+        Boolean loopBreak = true;
+        do {
+            if (firstCheck){
+                System.out.println("Loyalty program code already exists \nPlease select a new one\n\n");
+            }
+            System.out.println("Choose your Loyalty program code: \n");
+            lpCode = sc.nextLine();
+            System.out.println(lpCode);
+            String sql_check = "Select lp_code from brand where brand_id= '"+BrandLandingInterface.loggedInUser.getUser_Id()+"'";
+            result = statement.executeQuery(sql_check);
+            result.next();
+            int foo = result.getObject("LP_CODE") != null ? result.getInt("LP_CODE") : -1;
+            if(foo == -1){
+                loopBreak = false;
+            }
+            firstCheck = true;
+        } while (loopBreak);
+
         System.out.println("How many tiers whould you like to have in your loyalty program?");
         int tierNum = sc.nextInt();
         sc.nextLine();
         String[] tierNames = new String[3];
-        String[] multiplier  = new String[3];
-        String[] pointsRequired = new String[3];
+        int[] multiplier  = new int[3];
+        int[] pointsRequired = new int[3];
         for(int i=0;i<tierNum;i++){
             System.out.println("Enter the name of tier "+i+1);
             tierNames[i] = sc.nextLine();
         }
         for(int i=0;i<tierNum;i++){
             System.out.println("Enter the point multiplier for tier "+i+1);
-            multiplier[i] = sc.nextLine();
+            multiplier[i] = sc.nextInt();
+            sc.nextLine();
         }
         for(int i=0;i<tierNum;i++){
             System.out.println("Enter the points required to enter tier "+i+1);
-            pointsRequired[i] = sc.nextLine();
+            pointsRequired[i] = sc.nextInt();
+            sc.nextLine();
+        }
+
+        PreparedStatement ps = BrandLandingInterface.conn
+        .prepareStatement("UPDATE BRAND SET LP_CODE=?, LP_NAME=?, TIER1=?, TIER2 = ?,TIER3=?, MULT1=?, MULT2=?, MULT3=?, POINTS_REQ_TIER1=?, POINTS_REQ_TIER2=?, POINTS_REQ_TIER3=? WHERE BRAND_ID = ?");
+
+        ps.setString(1, lpCode);
+        ps.setString(2, lpName);
+        ps.setString(3, tierNames[0]);
+        ps.setString(4, tierNames[1]);
+        ps.setString(5, tierNames[2]);
+        ps.setInt(6, multiplier[0] );
+        ps.setInt(7, multiplier[1] );
+        ps.setInt(8, multiplier[2] );
+        ps.setInt(9, pointsRequired[0]);
+        ps.setInt(10, pointsRequired[1]);
+        ps.setInt(11, pointsRequired[2]);
+        ps.setString(12, BrandLandingInterface.loggedInUser.getUser_Id());
+        int id1 = ps.executeUpdate();
+
+        System.out.println(id1);
+
+        if (id1 > 0) {
+            System.out.println("Loyalty program updated");
+        } else {
+            System.out.println("Row not found");
         }
 
     }
