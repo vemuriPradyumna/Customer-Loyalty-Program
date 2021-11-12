@@ -29,7 +29,8 @@ public class Home {
                         SignUp.SignUpInterface(connection);
                         break;
                     case 3:
-                        System.out.println("Show queries");
+                        System.out.println("Showing queries....");
+                        showQueries.queryLandingInterface(connection);
                         break;
                     case 4:
                         System.out.println("Exiting...");
