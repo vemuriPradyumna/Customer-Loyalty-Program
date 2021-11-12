@@ -1,17 +1,15 @@
 package Codebase;
-import java.sql.*;
-import java.text.ParseException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Scanner;
-
-import javax.swing.text.StyledEditorKit.BoldAction;
 
 import Codebase.POJO.Activity;
 import Codebase.POJO.LoggedInUser;
 import Codebase.POJO.Reward;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 public class BrandLandingInterface {
     public static Statement statement = null;
