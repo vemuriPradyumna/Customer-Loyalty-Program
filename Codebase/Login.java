@@ -3,6 +3,8 @@ package Codebase;
 import java.sql.*;
 import java.util.Scanner;
 
+import Codebase.POJO.LoggedInUser;
+
 public class Login {
 
     public static Statement statement = null;
@@ -35,8 +37,17 @@ public class Login {
                 String userType = result.getString("USER_TYPE");
                 System.out.println(userId+" Login successful!  \n");
                 System.out.println("Welcome "+userType);
-                
-                LoggedInUser loggedInUser = new LoggedInUser(userId, userType);
+                String walletId = null;
+                if(userType.equals("Customer")){
+                    String sqlCred = "select WALLET_ID from customer where customer_id='"+userId+"'";
+                    System.out.println(sqlCred);
+                    result = statement.executeQuery(sqlCred);
+                    result.next();
+                    walletId = result.getString("WALLET_ID");
+                    result = statement.executeQuery(sqlCred);
+                    firstCheck = true;
+                }
+                LoggedInUser loggedInUser = new LoggedInUser(userId, userType,walletId);
 
                 switch (userType) {
                     case "Customer":
@@ -59,7 +70,6 @@ public class Login {
                 e.printStackTrace();
             } 
             finally {
-                close(in);
                 close(result);
                 close(statement);
             }

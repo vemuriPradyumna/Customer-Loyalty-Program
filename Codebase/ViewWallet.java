@@ -3,6 +3,8 @@ package Codebase;
 import java.sql.*;
 import java.util.Scanner;
 
+import Codebase.POJO.LoggedInUser;
+
 public class ViewWallet {
 
     public static Statement statement = null;

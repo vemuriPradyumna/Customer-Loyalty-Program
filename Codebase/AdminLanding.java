@@ -18,7 +18,7 @@ public class AdminLanding {
         AdminLanding.conn = conn;
         Scanner sc = new Scanner(System.in);
         int selection = 0;
-        boolean main_flag = true;
+        boolean flag = true;
         try {
             try {
                 do{
@@ -59,14 +59,14 @@ public class AdminLanding {
                         break;
                     case 7:
                         System.out.println("Logging out....");
-                        main_flag = false;
+                        flag = false;
                         break;    
                     default:
                         System.out.println("You have entered an incorrect selection try again");
                     }
-                } while(main_flag);
+                } while(flag);
             } finally {
-                close(conn);
+                //close(conn);
             }
         }
 
