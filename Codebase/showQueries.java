@@ -76,7 +76,7 @@ public class showQueries {
                 }
             } while(main_flag);
         } finally {
-            close(showQueries.conn);
+            //close(showQueries.conn);
         }
     }
 
@@ -91,10 +91,10 @@ public class showQueries {
 
         sc = new Scanner(System.in);
         showQueries.statement = conn.createStatement();
-        String sql = "SELECT DISTINCT customer_name FROM customer MINUS (SELECT DISTINCT customer_name FROM customer WHERE wallet_id IN (SELECT C.wallet_id FROM cust_wallet C, brand B WHERE C.lp_code = B.lp_code AND brand_id = 'Brand02'))";
+        String sql = "SELECT DISTINCT customer_id FROM customer MINUS (SELECT DISTINCT customer_id FROM customer WHERE wallet_id IN (SELECT C.wallet_id FROM cust_wallet C, brand B WHERE C.lp_code = B.lp_code AND brand_id = 'Brand02'))";
         result = statement.executeQuery(sql);
         while(result.next()){
-            System.out.println(result.getString("customer_name"));
+            System.out.println(result.getString("customer_id"));
         }
     }
 
@@ -102,10 +102,11 @@ public class showQueries {
 
         sc = new Scanner(System.in);
         showQueries.statement = conn.createStatement();
-        String sql = "SELECT DISTINCT C.customer_name FROM customer C, cust_wallet C1 WHERE C.wallet_id = C1.wallet_id MINUS (SELECT C.customer_name FROM customer C WHERE C.wallet_id IN ( SELECT wallet_id FROM cust_wallet WHERE lp_code IN ( SELECT lp_code FROM brand WHERE brand_id IN ( SELECT brand_id FROM re_rules WHERE act_cat_code IN ( SELECT act_cat_code FROM customer_activity_log )))))";
+        //String sql = "SELECT DISTINCT C.customer_id FROM customer C, cust_wallet C1 WHERE C.wallet_id = C1.wallet_id MINUS (SELECT C.customer_name FROM customer C WHERE C.wallet_id IN ( SELECT wallet_id FROM cust_wallet WHERE lp_code IN ( SELECT lp_code FROM brand WHERE brand_id IN ( SELECT brand_id FROM re_rules WHERE act_cat_code IN ( SELECT act_cat_code FROM customer_activity_log )))))";
+        String sql = "SELECT cust_id, lp_code FROM cust_wallet MINUS SELECT C.cust_id, C.lp_code FROM cust_wallet C WHERE C.cust_id IN (SELECT cust_id FROM customer_activity_log WHERE re_rule_code IN (SELECT re_rule_code FROM re_rules WHERE lp_code = C.lp_code ))";
         result = statement.executeQuery(sql);
         while(result.next()){
-              System.out.println(result.getString("customer_name"));
+              System.out.println("Customer ID: "+result.getString("cust_id")+"\n"+"Loyalty Program Code: "+result.getString("lp_code")+"\n");
         }  
 
     }
@@ -125,7 +126,7 @@ public class showQueries {
 
         sc = new Scanner(System.in);
         showQueries.statement = conn.createStatement(); 
-        String sql = "SELECT lp_name FROM brand WHERE brand_id in (SELECT brand_id FROM re_rules WHERE act_cat_code IN (SELECT act_cat_code FROM activities WHERE act_name = 'Refer a Friend'))";
+        String sql = "SELECT lp_name FROM brand WHERE lp_code in (SELECT lp_code FROM re_rules WHERE act_cat_code IN (SELECT act_cat_code FROM activities WHERE act_name = 'Refer a Friend'))";
         result = statement.executeQuery(sql);
         while(result.next()){
             System.out.println(result.getString("lp_name"));
@@ -136,7 +137,7 @@ public class showQueries {
 
         sc = new Scanner(System.in);
         showQueries.statement = conn.createStatement(); 
-        String sql = "SELECT A.act_name, count(*) as count FROM customer_activity_log C INNER JOIN activities A ON C.act_cat_code = a.act_cat_code WHERE c.act_cat_code IN (SELECT act_cat_code FROM re_rules WHERE brand_id = 'Brand01') group by C.act_cat_code, a.act_name";
+        String sql = "SELECT A.act_name, count(*) as count FROM customer_activity_log C INNER JOIN activities A ON C.act_cat_code = a.act_cat_code WHERE c.act_cat_code IN (SELECT act_cat_code FROM re_rules WHERE lp_code IN (SELECT lp_code FROM brand WHERE brand_id = 'Brand01')) group by C.act_cat_code, a.act_name";
         result = statement.executeQuery(sql);
         while(result.next()){
             System.out.println(result.getString("act_name")+"\t\t"+result.getString("count"));
@@ -169,11 +170,18 @@ public class showQueries {
 
         sc = new Scanner(System.in);
         showQueries.statement = conn.createStatement(); 
-        String sql = "SELECT count(*) as count FROM customer_activity_log WHERE cust_id = 'C0003' AND act_cat_code IN ( SELECT act_cat_code FROM re_rules WHERE brand_id = 'Brand02' ) AND date_of_activity BETWEEN TO_DATE('08/01/2021', 'MM/DD/YYYY') AND TO_DATE('09/30/2021', 'MM/DD/YYYY') group by act_cat_code";
+        String sql = "SELECT count(*) as count FROM customer_activity_log WHERE cust_id = 'anisha' AND re_rule_code IN ( SELECT re_rule_code FROM re_rules WHERE lp_code IN (SELECT lp_code from brand WHERE brand_id='Brand02') ) AND date_of_activity BETWEEN TO_DATE('08/01/2021', 'MM/DD/YYYY') AND TO_DATE('09/30/2021', 'MM/DD/YYYY')";
         result = statement.executeQuery(sql);
-        while(result.next()){
-            System.out.println(result.getString("count"));
-        }
+        int a;
+        int b;
+        result.next();
+        a = result.getInt("count");
+        ResultSet res = null;
+        res = statement.executeQuery("SELECT count(*) as count FROM customer_reward_log WHERE cust_id = 'anisha' AND lp_code IN (SELECT lp_code from brand WHERE brand_id='Brand02') AND date_of_reward BETWEEN TO_DATE('08/01/2021', 'MM/DD/YYYY') AND TO_DATE('09/30/2021', 'MM/DD/YYYY')");
+        res.next();
+        b = res.getInt("count");
+        int c = a+b;
+        System.out.println("Total number of activities done is:"+c);
     }
     static void close(Connection connection) {
         if (connection != null) {

@@ -46,7 +46,6 @@ public class CustomerLanding {
                         break;
                     case 3:
                         System.out.println("View Wallet....");
-                        //ViewWallet.ViewWalletInterface(conn, loggedInUser);
                         ViewWalletInterface(conn, loggedInUser);
                         break;
                     case 4:
@@ -121,15 +120,15 @@ public class CustomerLanding {
                             lp1 = result3.getString("lp_code");
 
                             ResultSet result4 = null;
-                            statement.executeQuery("INSERT INTO cust_wallet(lp_code,wallet_id,cust_id) VALUES ('"+lp1+"','"+wallet+"','"+loggedInUser.getUser_Id()+"')");
-                            
-                            System.out.println("Your Wallet for this Loyalty Program is: \n");
+                            statement.executeQuery("INSERT INTO cust_wallet(lp_code,current_points,wallet_id,cust_id) VALUES ('"+lp1+"',0,'"+wallet+"','"+loggedInUser.getUser_Id()+"')");
+                            System.out.println("Your Wallet for this Loyalty Program has been created!\n");
+                            /*System.out.println("Your Wallet for this Loyalty Program is: \n");
 
                             result4 = statement.executeQuery("SELECT * FROM cust_wallet WHERE lp_code = '"+lp1+"' AND wallet_id = '"+wallet+"'");
                             while(result4.next()){
                                 System.out.println("\n"+"Loyalty Program code: "+result4.getString("lp_code")+"\n"+"Points accumulated: "+result4.getString("points_acc")+"\n"+"Current Points: "+result4.getString("current_points")+"\n"+"Wallet ID: "+result4.getString("wallet_id")+"\nCustomer ID : "+result.getString("cust_id")+"\n");
                             }
-                            flag = false;
+                            flag = false;*/
                         }
                         break;
 
@@ -168,11 +167,11 @@ public class CustomerLanding {
                
                 }
     
-                System.out.println("\n1. Go back\n");
-                selection = sc.nextInt();
-                sc.nextLine();                
+                System.out.println("\n1. Go back\n");                
             
                 do{
+                    selection = sc.nextInt();
+                    sc.nextLine();
                     switch (selection) {
                         case 1:
                             flag = false;
@@ -366,6 +365,96 @@ public class CustomerLanding {
 				e.printStackTrace();
 			}
         }
+    }
+
+    static void redeemPoints(Connection conn,LoggedInUser loggedInUser) throws SQLException{
+
+        int selection = 0;
+        Scanner sc = new Scanner(System.in);
+        boolean flag = true;
+        String lp = null;
+        String reward = null;
+        boolean stepone = false;
+        boolean steptwo = false;
+        boolean stepthree = false;
+        int count;
+        try {
+            
+            statement = conn.createStatement();
+            System.out.println("\t\t Loyalty Program you are enrolled in: \n");
+
+            String sql_check = "SELECT DISTINCT lp_name FROM Brand WHERE lp_code IN (SELECT lp_code FROM cust_wallet WHERE cust_id = '"+loggedInUser.getUser_Id()+"')";
+            result = statement.executeQuery(sql_check);
+            ResultSet dummy = result;
+       
+                    while (result.next()){
+       
+                        System.out.println("\n"+result.getString("lp_name")+"\n");
+       
+                    }
+            System.out.println("Please enter a Loyalty Program of your choice to redeem points:\n");
+            lp = sc.nextLine();
+
+           while(dummy.next()){
+                if(lp.equals(dummy.getString("lp_name"))){
+                    stepone = true;
+                    break;
+                }
+            }
+
+            ResultSet result01 = null;
+            result01 = statement.executeQuery("SELECT reward_name FROM reward_type WHERE reward_cat_code IN (SELECT reward_cat_code FROM rr_rules WHERE lp_code IN (SELECT lp_code FROM brand WHERE lp_name = '"+lp+"'))");
+            ResultSet dummy2 = result01;
+            while(result01.next()){
+                System.out.println(result01.getString("reward_name\n"));
+            }
+            System.out.println("Please enter a Reward to redeem:\n");
+            reward = sc.nextLine();
+            while(dummy2.next()){
+                if(reward.equals(dummy2.getString("reward_name"))){
+                     steptwo = true;
+                     break;
+                }
+            }
+            ResultSet result02 = null;
+            result02 = statement.executeQuery("SELECT no_instances FROM rewards WHERE lp_code IN (SELECT lp_code FROM brand WHERE lp_name='"+lp+"') AND reward_cat_code IN (SELECT reward_cat_code FROM reward_type WHERE reward_name='"+reward+"')");
+            System.out.println("Please enter the quantity of Reward:\n");
+            count = sc.nextInt();
+            if(count <= result02.getInt("no_instances")){
+                stepthree = true;
+            }
+        
+            System.out.println("\n1. Redeem the selected Reward?\n");
+            System.out.println("\n2. Go back\n");
+            selection = sc.nextInt();
+            sc.nextLine();                
+            do{
+                switch (selection) {
+                    case 1:
+                        if(stepone && steptwo && stepthree){
+
+                        }
+                        else{
+                            System.out.println("Error! Please try again!!\n");
+                            flag = false;
+                        }
+                        break;
+                    case 2:
+                        System.out.println("Exiting....");
+                        flag = false;
+                        break;
+                    default:
+                        System.out.println("You have entered an incorrect selection try again");
+                }
+            }while(flag);
+        }catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(result);
+            close(statement);
+        }
+
+
     }
 
     static void close(Connection connection) {
