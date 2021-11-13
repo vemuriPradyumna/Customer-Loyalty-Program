@@ -119,16 +119,17 @@ public class CustomerLanding {
                             result3.next();
                             lp1 = result3.getString("lp_code");
 
-                            ResultSet result4 = null;
+                            //ResultSet result4 = null;
                             statement.executeQuery("INSERT INTO cust_wallet(lp_code,current_points,wallet_id,cust_id) VALUES ('"+lp1+"',0,'"+wallet+"','"+loggedInUser.getUser_Id()+"')");
                             System.out.println("Your Wallet for this Loyalty Program has been created!\n");
+
                             /*System.out.println("Your Wallet for this Loyalty Program is: \n");
 
                             result4 = statement.executeQuery("SELECT * FROM cust_wallet WHERE lp_code = '"+lp1+"' AND wallet_id = '"+wallet+"'");
                             while(result4.next()){
                                 System.out.println("\n"+"Loyalty Program code: "+result4.getString("lp_code")+"\n"+"Points accumulated: "+result4.getString("points_acc")+"\n"+"Current Points: "+result4.getString("current_points")+"\n"+"Wallet ID: "+result4.getString("wallet_id")+"\nCustomer ID : "+result.getString("cust_id")+"\n");
-                            }
-                            flag = false;*/
+                            }*/
+                            flag = false;
                         }
                         break;
 
