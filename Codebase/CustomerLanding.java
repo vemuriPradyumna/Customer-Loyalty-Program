@@ -1,14 +1,16 @@
 package Codebase;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import Codebase.POJO.Activity;
 import Codebase.POJO.LoggedInUser;
 import Codebase.POJO.ReRule;
 import Codebase.POJO.Reward;
-import oracle.jdbc.logging.annotations.Log;
 
 public class CustomerLanding {
     
@@ -62,7 +64,7 @@ public class CustomerLanding {
                 System.out.println("Failed to connect to DB");
                 e.printStackTrace();
             } finally {
-                close(conn);
+                //close(conn);
             }       
         }
     
@@ -119,13 +121,13 @@ public class CustomerLanding {
                             lp1 = result3.getString("lp_code");
 
                             ResultSet result4 = null;
-                            statement.executeQuery("INSERT INTO cust_wallet(lp_code,wallet_id) VALUES ('"+lp1+"','"+wallet+"')");
+                            statement.executeQuery("INSERT INTO cust_wallet(lp_code,wallet_id,cust_id) VALUES ('"+lp1+"','"+wallet+"','"+loggedInUser.getUser_Id()+"')");
                             
                             System.out.println("Your Wallet for this Loyalty Program is: \n");
 
                             result4 = statement.executeQuery("SELECT * FROM cust_wallet WHERE lp_code = '"+lp1+"' AND wallet_id = '"+wallet+"'");
                             while(result4.next()){
-                                System.out.println("\n"+"Loyalty Program code: "+result4.getString("lp_code")+"\n"+"Points accumulated: "+result4.getString("points_acc")+"\n"+"Tier Status: "+result4.getString("tier_status")+"\n"+"Current Points: "+result4.getString("current_points")+"\n"+"Wallet ID: "+result4.getString("wallet_id"));
+                                System.out.println("\n"+"Loyalty Program code: "+result4.getString("lp_code")+"\n"+"Points accumulated: "+result4.getString("points_acc")+"\n"+"Current Points: "+result4.getString("current_points")+"\n"+"Wallet ID: "+result4.getString("wallet_id")+"\nCustomer ID : "+result.getString("cust_id")+"\n");
                             }
                             flag = false;
                         }
@@ -162,7 +164,7 @@ public class CustomerLanding {
                
                 while (result.next()){
                
-                    System.out.println("\nLoyalty Program : "+result.getString("lp_code")+"\n"+"Points accumulated : "+result.getString("points_acc")+"\n"+"Tier Status : "+result.getString("tier_status")+"\n"+"Current Points : "+result.getString("current_points")+"\n"+"Wallet ID : "+result.getString("wallet_id")+"\n");
+                    System.out.println("\nLoyalty Program : "+result.getString("lp_code")+"\n"+"Points accumulated : "+result.getString("points_acc")+"\n"+"Current Points : "+result.getString("current_points")+"\n"+"Wallet ID : "+result.getString("wallet_id")+"\n"+"Customer ID : "+result.getString("cust_id")+"\n");
                
                 }
     
