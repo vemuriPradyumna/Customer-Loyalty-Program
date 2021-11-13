@@ -3,6 +3,7 @@ package Codebase;
 import java.sql.*;
 import java.util.Scanner;
 
+import Codebase.POJO.LoggedInBrand;
 import Codebase.POJO.LoggedInUser;
 
 public class Login {
@@ -38,6 +39,7 @@ public class Login {
                 System.out.println(userId+" Login successful!  \n");
                 System.out.println("Welcome "+userType);
                 String walletId = null;
+                LoggedInBrand loggedInBrand = null;
                 if(userType.equals("Customer")){
                     String sqlCred = "select WALLET_ID from customer where customer_id='"+userId+"'";
                     System.out.println(sqlCred);
@@ -45,7 +47,17 @@ public class Login {
                     result.next();
                     walletId = result.getString("WALLET_ID");
                     result = statement.executeQuery(sqlCred);
-                    firstCheck = true;
+                } else if(userType.equals("Brand")){
+                    String sqlCred = "select BRAND_NAME,LP_CODE,LP_NAME,ISTIERED from customer where brand_id='"+userId+"'";
+                    System.out.println(sqlCred);
+                    result = statement.executeQuery(sqlCred);
+                    result.next();
+                    String brandId = userId;
+                    String brandName = result.getString("BRAND_NAME");
+                    String lpCode = result.getString("LP_CODE");
+                    String lpName = result.getString("LP_NAME");
+                    int isTiered = Integer.parseInt(result.getString("ISTIERED"));
+                    loggedInBrand = new LoggedInBrand(brandId, brandName, lpCode, lpName, isTiered);
                 }
                 LoggedInUser loggedInUser = new LoggedInUser(userId, userType,walletId);
 
@@ -56,7 +68,7 @@ public class Login {
                         break;
                     case "Brand":
                         System.out.println("Brand landing");
-                        BrandLandingInterface.BrandUi(conn, loggedInUser);
+                        BrandLandingInterface.BrandUi(conn, loggedInBrand);
                         break;
                     case "Admin":
                         System.out.println("Admin landing\n\n");
