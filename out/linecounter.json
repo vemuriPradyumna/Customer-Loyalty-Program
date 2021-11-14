@@ -1,0 +1,347 @@
+{
+    "extension": "linecounter",
+    "version": "0.2.7",
+    "workspace": "c:\\Users\\princ\\Documents\\NCSU\\DBMS\\Customer Loyalty Program",
+    "linecount": [
+        {
+            "version": "0.2.7",
+            "counttime": "2021-11-13 15:31:25",
+            "filesum": 23,
+            "codesum": 2580,
+            "commentsum": 53,
+            "blanksum": 490,
+            "statistics": {
+                ".sql": {
+                    "code": 91,
+                    "comment": 0,
+                    "blank": 24
+                },
+                "": {
+                    "code": 1,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".java": {
+                    "code": 2486,
+                    "comment": 53,
+                    "blank": 465
+                },
+                ".md": {
+                    "code": 2,
+                    "comment": 0,
+                    "blank": 1
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".gitignore"
+                },
+                {
+                    "blank": 36,
+                    "code": 120,
+                    "comment": 0,
+                    "filename": "Codebase\\AddInfo.java"
+                },
+                {
+                    "blank": 34,
+                    "code": 218,
+                    "comment": 3,
+                    "filename": "Codebase\\AdminLanding.java"
+                },
+                {
+                    "blank": 83,
+                    "code": 710,
+                    "comment": 36,
+                    "filename": "Codebase\\BrandLandingInterface.java"
+                },
+                {
+                    "blank": 53,
+                    "code": 350,
+                    "comment": 7,
+                    "filename": "Codebase\\CustomerLanding.java"
+                },
+                {
+                    "blank": 21,
+                    "code": 100,
+                    "comment": 1,
+                    "filename": "Codebase\\EnrollLoyaltyProgram.java"
+                },
+                {
+                    "blank": 8,
+                    "code": 56,
+                    "comment": 0,
+                    "filename": "Codebase\\Home.java"
+                },
+                {
+                    "blank": 7,
+                    "code": 32,
+                    "comment": 0,
+                    "filename": "Codebase\\Inititlize.java"
+                },
+                {
+                    "blank": 12,
+                    "code": 101,
+                    "comment": 2,
+                    "filename": "Codebase\\Login.java"
+                },
+                {
+                    "blank": 10,
+                    "code": 21,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\Activity.java"
+                },
+                {
+                    "blank": 12,
+                    "code": 37,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\Brand.java"
+                },
+                {
+                    "blank": 2,
+                    "code": 3,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\CustomerWallet.java"
+                },
+                {
+                    "blank": 7,
+                    "code": 45,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\LoggedInBrand.java"
+                },
+                {
+                    "blank": 15,
+                    "code": 29,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\LoggedInUser.java"
+                },
+                {
+                    "blank": 9,
+                    "code": 21,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\LoyaltyProgram.java"
+                },
+                {
+                    "blank": 19,
+                    "code": 54,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\ReRule.java"
+                },
+                {
+                    "blank": 23,
+                    "code": 49,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\Reward.java"
+                },
+                {
+                    "blank": 33,
+                    "code": 111,
+                    "comment": 2,
+                    "filename": "Codebase\\ShowInfo.java"
+                },
+                {
+                    "blank": 29,
+                    "code": 158,
+                    "comment": 0,
+                    "filename": "Codebase\\showQueries.java"
+                },
+                {
+                    "blank": 34,
+                    "code": 207,
+                    "comment": 2,
+                    "filename": "Codebase\\SignUp.java"
+                },
+                {
+                    "blank": 18,
+                    "code": 64,
+                    "comment": 0,
+                    "filename": "Codebase\\ViewWallet.java"
+                },
+                {
+                    "blank": 1,
+                    "code": 2,
+                    "comment": 0,
+                    "filename": "Readme.md"
+                },
+                {
+                    "blank": 24,
+                    "code": 91,
+                    "comment": 0,
+                    "filename": "SQL files\\Create_tables.sql"
+                }
+            ]
+        },
+        {
+            "version": "0.2.7",
+            "counttime": "2021-11-13 18:49:34",
+            "filesum": 23,
+            "codesum": 2719,
+            "commentsum": 54,
+            "blanksum": 515,
+            "statistics": {
+                ".java": {
+                    "code": 2625,
+                    "comment": 54,
+                    "blank": 490
+                },
+                ".md": {
+                    "code": 2,
+                    "comment": 0,
+                    "blank": 1
+                },
+                "": {
+                    "code": 1,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".sql": {
+                    "code": 91,
+                    "comment": 0,
+                    "blank": 24
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": ".gitignore"
+                },
+                {
+                    "blank": 36,
+                    "code": 120,
+                    "comment": 0,
+                    "filename": "Codebase\\AddInfo.java"
+                },
+                {
+                    "blank": 34,
+                    "code": 218,
+                    "comment": 3,
+                    "filename": "Codebase\\AdminLanding.java"
+                },
+                {
+                    "blank": 83,
+                    "code": 710,
+                    "comment": 36,
+                    "filename": "Codebase\\BrandLandingInterface.java"
+                },
+                {
+                    "blank": 78,
+                    "code": 489,
+                    "comment": 8,
+                    "filename": "Codebase\\CustomerLanding.java"
+                },
+                {
+                    "blank": 21,
+                    "code": 100,
+                    "comment": 1,
+                    "filename": "Codebase\\EnrollLoyaltyProgram.java"
+                },
+                {
+                    "blank": 8,
+                    "code": 56,
+                    "comment": 0,
+                    "filename": "Codebase\\Home.java"
+                },
+                {
+                    "blank": 7,
+                    "code": 32,
+                    "comment": 0,
+                    "filename": "Codebase\\Inititlize.java"
+                },
+                {
+                    "blank": 12,
+                    "code": 101,
+                    "comment": 2,
+                    "filename": "Codebase\\Login.java"
+                },
+                {
+                    "blank": 10,
+                    "code": 21,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\Activity.java"
+                },
+                {
+                    "blank": 12,
+                    "code": 37,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\Brand.java"
+                },
+                {
+                    "blank": 2,
+                    "code": 3,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\CustomerWallet.java"
+                },
+                {
+                    "blank": 7,
+                    "code": 45,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\LoggedInBrand.java"
+                },
+                {
+                    "blank": 15,
+                    "code": 29,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\LoggedInUser.java"
+                },
+                {
+                    "blank": 9,
+                    "code": 21,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\LoyaltyProgram.java"
+                },
+                {
+                    "blank": 19,
+                    "code": 54,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\ReRule.java"
+                },
+                {
+                    "blank": 23,
+                    "code": 49,
+                    "comment": 0,
+                    "filename": "Codebase\\POJO\\Reward.java"
+                },
+                {
+                    "blank": 33,
+                    "code": 111,
+                    "comment": 2,
+                    "filename": "Codebase\\ShowInfo.java"
+                },
+                {
+                    "blank": 29,
+                    "code": 158,
+                    "comment": 0,
+                    "filename": "Codebase\\showQueries.java"
+                },
+                {
+                    "blank": 34,
+                    "code": 207,
+                    "comment": 2,
+                    "filename": "Codebase\\SignUp.java"
+                },
+                {
+                    "blank": 18,
+                    "code": 64,
+                    "comment": 0,
+                    "filename": "Codebase\\ViewWallet.java"
+                },
+                {
+                    "blank": 1,
+                    "code": 2,
+                    "comment": 0,
+                    "filename": "Readme.md"
+                },
+                {
+                    "blank": 24,
+                    "code": 91,
+                    "comment": 0,
+                    "filename": "SQL files\\Create_tables.sql"
+                }
+            ]
+        }
+    ]
+}

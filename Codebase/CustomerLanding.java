@@ -5,12 +5,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import Codebase.POJO.Activity;
 import Codebase.POJO.LoggedInUser;
+import Codebase.POJO.LoyaltyProgram;
 import Codebase.POJO.ReRule;
 import Codebase.POJO.Reward;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class CustomerLanding {
     
@@ -18,9 +24,12 @@ public class CustomerLanding {
     public static ResultSet result = null;
     public static Scanner sc = null;
     public static Connection conn = null;
+    public static LoggedInUser loggedInUser= null;
+    public static Calendar calendar = Calendar.getInstance();
+    public static Date currentTime;
 
     public static void CustomerLandingInterface(Connection conn, LoggedInUser loggedInUser){       
-        
+            CustomerLanding.loggedInUser = loggedInUser;
             try {
                 CustomerLanding.conn = conn;
                 int selection = 0;
@@ -194,27 +203,29 @@ public class CustomerLanding {
     static void rewardActivities(Connection conn, LoggedInUser loggedInUser) throws SQLException{
         int selection = 0;
         boolean flag = true;
-        ArrayList<String> lpList = new ArrayList<>();
+        ArrayList<LoyaltyProgram> lpList = new ArrayList<>();
         do {
-            String getEnrolledLoyaltyPrograms = "SELECT DISTINCT LP_CODE FROM cust_wallet WHERE WALLET_ID='"+loggedInUser.getWalletId()+"'";
+            String getEnrolledLoyaltyPrograms = "select BRAND.LP_NAME,BRAND.LP_CODE from Brand,cust_wallet where BRAND.LP_CODE = CUST_WALLET.LP_CODE AND CUST_WALLET.WALLET_ID = '"+CustomerLanding.loggedInUser.getWalletId()+"'";
 
             // System.out.println(sqlCred);
             result = statement.executeQuery(getEnrolledLoyaltyPrograms);
-            String lp = null;
+            String lpCode = null;
+            String lpName = null;
             while (result.next()) {
-                lp = result.getString("LP_CODE");
-                lpList.add(lp);
+                lpCode = result.getString("LP_CODE");
+                lpName = result.getString("LP_NAME");
+                lpList.add(new LoyaltyProgram(lpCode, lpName));
             }
-            System.out.println("\t\t These are your enrolled loyalty programs\n");
+            System.out.println("\t\t These are your enrolled loyalty programs. \n Choose LP in which you would like to perform activity\n");
 
             for(int i = 0;i< lpList.size();i++){
-                System.out.println(i+1+". "+lpList.get(i));
+                System.out.println(i+1+". "+lpList.get(i).getLpName());
             }
             System.out.println((lpList.size()+1)+". Go Back");
             selection = sc.nextInt();
             sc.nextLine();
             if(selection>0 && selection<=lpList.size()){
-                performRewardActivities(lpList.get(selection-1),loggedInUser);
+                performRewardActivities(lpList.get(selection-1));
             } else if(selection == lpList.size()+1){
                 flag = false;
             } else{
@@ -223,6 +234,196 @@ public class CustomerLanding {
         } while (flag);
     }
 
+    
+    static void performRewardActivities(LoyaltyProgram loyaltyProgram) throws SQLException{
+        int selection = 0;
+        boolean flag = true;
+        System.out.println("\nFetching Activity list from the loyalty program...");
+        System.out.println("Select the activities you would like to perform");
+        ArrayList<Activity> activities = new ArrayList<>();
+    
+        do {
+            String getActivityNames = "select activities.act_name,activities.act_cat_code from RE_RULES,ACTIVITIES WHERE re_rules.act_cat_code = activities.act_cat_code and re_rules.lp_code='"+loyaltyProgram.getLpCode()+"'";
+            result = statement.executeQuery(getActivityNames);
+            
+            System.out.println("\t\t List of available activities in the selected loyalty program\n");
+            Activity activity;
+            while (result.next()) {
+                activity = new Activity(result.getString("ACT_CAT_CODE"), result.getString("ACT_NAME"));
+                activities.add(activity);
+            }
+            for(int i = 0;i< activities.size();i++){
+                System.out.println(i+1+". "+activities.get(i).getActivityName());
+            }
+            System.out.println((activities.size()+1)+". Go Back");
+            selection = sc.nextInt();
+            sc.nextLine();
+            if(selection>0 && selection<=activities.size()){
+                
+            } else if(selection == activities.size()+1){
+                flag = false;
+            } else{
+                System.out.println("Wrong selection! Try again! \n");
+            }
+        } while (flag);
+    }
+
+    static void DoActivity(Activity activity,LoyaltyProgram loyaltyProgram) throws SQLException{
+        String getMultiplierTier = "select tier_mult from tier_status_update where lp_code = '"+loyaltyProgram.getLpCode()+"' and cust_id='"+CustomerLanding.loggedInUser.getUser_Id()+"'";
+        result = statement.executeQuery(getMultiplierTier);
+        int tierMult = result.getInt("tier_mult");
+        if(activity.getActivityName().equals("Purchase") || activity.getActivityName().equals("Purchase")){
+            System.out.println("Enter the purchase amount");
+            int amount = sc.nextInt();
+            sc.nextLine();
+            System.out.println("Checking if you have any gift cards...");
+            String getGiftCard = "select reward_cat_code, datavalue from customer_reward_log where customer_reward_log.expirydate > current_timestamp and REWARD_CAT_CODE = 'R2' and cust_id='"+CustomerLanding.loggedInUser.getUser_Id()+"'";
+            String getGiftCardCount = "select count(*) as rowcount from customer_reward_log where customer_reward_log.expirydate > current_timestamp and REWARD_CAT_CODE = 'R2' and cust_id='"+CustomerLanding.loggedInUser.getUser_Id()+"'";
+            // System.out.println(sqlCred);
+            result = statement.executeQuery(getGiftCard);
+            if (!result.next()){
+                System.out.println("You have no gift cards available..");
+                System.out.println("Proceeding to transaction without gift cards...");
+        
+                System.out.println("Total value of purchase made is "+amount);
+                String getMultiplier = "select points,re_rule_code from re_rules where lp_code = '"+loyaltyProgram.getLpCode()+"' and ACT_CAT_CODE='A01'";
+                result = statement.executeQuery(getMultiplier);
+                int pointMult = result.getInt("Points");
+                String re_code = result.getString("re_rule_code");
+                int pointsToBeAdded = (amount)*pointMult;
+
+
+
+                PreparedStatement ps = CustomerLanding.conn
+                .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,data_value,date_of_activity,re_rule_code,re_points) VALUES (?,?,?,?,?,?)");
+                ps.setString(1, activity.getActivityCode());
+                ps.setString(2, CustomerLanding.loggedInUser.getUser_Id());
+                ps.setString(3, Integer.toString(amount));
+
+                Date currentTime = calendar.getTime();
+                long time = currentTime.getTime();
+                ps.setTimestamp(4, new Timestamp(time));
+                ps.setString(5, re_code);
+                ps.setInt(6, pointsToBeAdded*tierMult);
+
+                
+
+                int id1 = ps.executeUpdate();
+        
+                System.out.println(id1);
+        
+                if (id1 > 0) {
+                    System.out.println("Activity recorded");
+                } else {
+                    System.out.println("Row not found");
+                }
+            } else{
+                int giftCardValue = 0;
+                int countGift = 0;
+                giftCardValue = Integer.parseInt(result.getString("datavalue"));
+                result = statement.executeQuery(getGiftCardCount);
+                countGift = result.getInt("rowcount");
+                System.out.println("Found "+countGift+" gift cards with value of "+giftCardValue);
+                System.out.println("\nWould you like to use your gift cards for the purchase?");
+                System.out.println("1. Yes");
+                System.out.println("2. No");
+                int response = sc.nextInt();
+                sc.nextLine();
+                boolean flagError = false;
+                if(response == 1){
+                    do{
+                        if(flagError){
+                            System.out.println("You have chosen the wrong number of gift cards.\n Please choose a valid number");
+                        }
+                    System.out.println("Choose the number of gift cards you want to use for the purchase");
+                    response = sc.nextInt();
+                    sc.nextLine();
+                    flagError = true;
+                    } while(!(response <= countGift && response>=0));
+                } else{
+                    System.out.println("Proceeding to transaction without gift cards...");
+                    response = 0;
+                }
+                    System.out.println("Total value of gift cards chosen is "+giftCardValue*response);
+                    if(amount <= giftCardValue*response){
+                        System.out.println("Your purchase has been made with the use of gift cards completely. \n Total bill 0$");
+                    } else{
+                        System.out.println("Total value of purchase made is "+(amount - giftCardValue*response));
+                        String getMultiplier = "select points,re_rule_code from re_rules where lp_code = '"+loyaltyProgram.getLpCode()+"' and ACT_CAT_CODE='A01'";
+                        result = statement.executeQuery(getMultiplier);
+                        int pointMult = result.getInt("Points");
+                        String re_code = result.getString("re_rule_code");
+                        int pointsToBeAdded = (amount - giftCardValue*response)*pointMult;
+                        PreparedStatement ps = CustomerLanding.conn
+                        .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,data_value,date_of_activity,re_rule_code,re_points) VALUES (?,?,?,?,?,?)");
+                        ps.setString(1, activity.getActivityCode());
+                        ps.setString(2, CustomerLanding.loggedInUser.getUser_Id());
+                        ps.setString(3, Integer.toString(amount));
+
+                        Date currentTime = calendar.getTime();
+                        long time = currentTime.getTime();
+                        ps.setTimestamp(4, new Timestamp(time));
+                        ps.setString(5, re_code);
+                        ps.setInt(6, pointsToBeAdded*tierMult);
+
+                        
+    
+                        int id1 = ps.executeUpdate();
+                
+                        System.out.println(id1);
+                
+                        if (id1 > 0) {
+                            System.out.println("Activity recorded");
+                        } else {
+                            System.out.println("Row not found");
+                        }
+                    }
+                }
+               
+
+        } else if(activity.getActivityName().equals("Leave a Review") || activity.getActivityName().equals("Leave a review")){
+            System.out.println("Enter a review for the Brand's Program (50 characters)");
+            String review = sc.nextLine();
+            String getPointsForActivity = "select points,re_rule_code from re_rules where lp_code = '"+loyaltyProgram.getLpCode()+"' and ACT_CAT_CODE='A02'";
+            result = statement.executeQuery(getPointsForActivity);
+            int points = result.getInt("Points");
+            String recode = result.getString("re_rule_code");
+            PreparedStatement ps = CustomerLanding.conn
+            .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,data_value,date_of_activity,re_rule_code,re_points) VALUES (?,?,?,?,?,?)");
+            ps.setString(1, activity.getActivityCode());
+            ps.setString(2, CustomerLanding.loggedInUser.getUser_Id());
+            ps.setString(3, review);
+
+            Date currentTime = calendar.getTime();
+            long time = currentTime.getTime();
+            ps.setTimestamp(4, new Timestamp(time));
+            ps.setString(5, recode);
+            ps.setInt(6, points*tierMult);
+
+        } else if(activity.getActivityName().equals("Refer a Friend") || activity.getActivityName().equals("Refer a Friend")){
+            System.out.println("Enter email of the person you are refering");
+            String friendId = sc.nextLine();
+            String getPointsForActivity = "select points,re_rule_code from re_rules where lp_code = '"+loyaltyProgram.getLpCode()+"' and ACT_CAT_CODE='A03'";
+            result = statement.executeQuery(getPointsForActivity);
+            int points = result.getInt("Points");
+            String recode = result.getString("re_rule_code");
+            PreparedStatement ps = CustomerLanding.conn
+            .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,data_value,date_of_activity,re_rule_code,re_points) VALUES (?,?,?,?,?,?)");
+            ps.setString(1, activity.getActivityCode());
+            ps.setString(2, CustomerLanding.loggedInUser.getUser_Id());
+            ps.setString(3, friendId);
+
+            Date currentTime = calendar.getTime();
+            long time = currentTime.getTime();
+            ps.setTimestamp(4, new Timestamp(time));
+            ps.setString(5, recode);
+            ps.setInt(6, points*tierMult);
+        }
+           
+    }
+
+
+    
     static void rewardRedeeming(Connection conn,LoggedInUser loggedInUser) throws SQLException{
         int selection = 0;
         boolean flag = true;
@@ -275,39 +476,6 @@ public class CustomerLanding {
             }
         } while (flag);
     }
-
-    static void performRewardActivities(String lpCode, LoggedInUser loggedInUser) throws SQLException{
-        int selection = 0;
-        boolean flag = true;
-        String getBrandId = "SELECT brand_id FROM brand WHERE LP_CODE='"+lpCode+"'";
-        result = statement.executeQuery(getBrandId);
-        result.next();
-        String brandId = result.getString("BRAND_ID");
-        do {
-            String getAcitivityCodes = "SELECT RE_RULE_CODE,BRAND_ID,ACT_CAT_CODE,RULE_VERSION,POINTS,ACTIVITY_NAME FROM brand WHERE BRAND_ID='"+brandId+"'";
-            result = statement.executeQuery(getAcitivityCodes);
-            ArrayList<ReRule> reRuleList = new ArrayList<>();
-            while (result.next()) {
-                reRuleList.add(new ReRule(result.getString("RE_RULE_CODE"), result.getString("BRAND_ID"), result.getString("ACT_CAT_CODE"), result.getString("ACTIVITY_NAME"), result.getString("RULE_VERSION"), Integer.parseInt(result.getString("POINTS"))));
-            }
-            System.out.println("\t\t List of available activities in the selected loyalty program\n");
-
-            for(int i = 0;i< reRuleList.size();i++){
-                System.out.println(i+1+". "+reRuleList.get(i).getActivityName());
-            }
-            System.out.println((reRuleList.size()+1)+". Go Back");
-            selection = sc.nextInt();
-            sc.nextLine();
-            if(selection>0 && selection<=reRuleList.size()){
-                addPointsToWallet(loggedInUser,reRuleList.get(selection-1).getPoints(),lpCode);
-            } else if(selection == reRuleList.size()+1){
-                flag = false;
-            } else{
-                System.out.println("Wrong selection! Try again! \n");
-            }
-        } while (flag);
-    }
-
 
 
     static void addPointsToWallet(LoggedInUser loggedInUser, int points, String lpCode){

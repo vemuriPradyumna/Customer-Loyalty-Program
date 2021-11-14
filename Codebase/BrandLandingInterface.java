@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+
 import Codebase.POJO.Activity;
 import Codebase.POJO.LoggedInBrand;
 import Codebase.POJO.LoggedInUser;
@@ -64,7 +65,7 @@ public class BrandLandingInterface {
                         System.out.println("The brand has not registered in a loyalty program yet! \n");
                         System.out.println("Please add a loyalty program and try again \n");
                     } else{
-                        addRewardTypes();
+                        addRrRule();
                     }
                     break; 
                 case 5:
@@ -248,7 +249,7 @@ public class BrandLandingInterface {
                     System.out.println("The brand has not registered in a loyalty program yet! \n");
                     System.out.println("Please add a loyalty program and try again \n");
                 } else{
-                    addRewardTypes();
+                    addRewards();
                 }
                 break;
             case 4:
@@ -270,6 +271,7 @@ public class BrandLandingInterface {
             // System.out.println(sqlCred);
             result = statement.executeQuery(getActivityList);
             Activity activity = null;
+            activities.clear();
             while (result.next()) {
                 activity = new Activity(result.getString("ACT_CAT_CODE"), result.getString("ACT_NAME"));
                 activities.add(activity);
@@ -291,12 +293,68 @@ public class BrandLandingInterface {
         } while (flag);
     }
 
-    static void addRewardTypes() throws SQLException{
+    static void addRewards() throws SQLException{
+        int selection = 0;
+        boolean flag = true;
+        ArrayList<Reward> rewards = new ArrayList<>();
+        System.out.println("Add rewards to loyalty program");
+        do {
+            String getRewardsList = "select REWARD_CAT_CODE,REWARD_NAME from REWARD_TYPE";
+            result = statement.executeQuery(getRewardsList);
+            Reward reward = null;
+            rewards.clear();
+            while (result.next()) {
+                reward = new Reward(result.getString("REWARD_CAT_CODE"), result.getString("REWARD_NAME"));
+                rewards.add(reward);
+            }
+            System.out.println("\t\t ADD REWARD TYPE\n\n");
+            for(int i = 0;i<rewards.size();i++){
+                System.out.println(i+1+". "+rewards.get(i).getRewardName());
+            }
+            System.out.println((rewards.size()+1)+". Go Back");
+            selection = sc.nextInt();
+            sc.nextLine();
+            if(selection>0 && selection<=rewards.size()){
+                addRewardToLp(rewards.get(selection-1));
+            } else if(selection == rewards.size()+1){
+                flag = false;
+            } else{
+                System.out.println("Wrong selection! Try again! \n");
+            }
+        } while (flag);
+    }
+
+    static void addRewardToLp(Reward reward) throws SQLException{
+        reward.setLpCode(BrandLandingInterface.loggedInBrand.getLpCode());
+        System.out.println("Enter number of Instances for reward");
+        int instances = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Enter the data value of the reward");
+        String dataValue = sc.nextLine();
+        reward.setInstances(instances);
+        reward.setValue(dataValue);
+
+        String sql = "INSERT INTO rewards (REWARD_CAT_CODE,LP_CODE,DATAVALUE,NO_INSTANCES) VALUES (?,?,?,?)";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, reward.getRewardCategory());
+        ps.setString(2, reward.getLpCode());
+        ps.setString(3, reward.getValue());
+        ps.setInt(4, reward.getInstances());
+        int id = ps.executeUpdate();
+        //System.out.println(id);
+        ps.close();
+
+
+    }
+
+
+    static void addRrRule() throws SQLException{
         int selection = 0;
         boolean flag = true;
         ArrayList<Reward> rewards = new ArrayList<>();
         do {
-            String getRewardsList = "select REWARD_CAT_CODE,REWARD_NAME from REWARDS_TYPE";
+            String getRewardsList = "select REWARD_TYPE.REWARD_CAT_CODE,REWARD_TYPE.REWARD_NAME,REWARDS.DATAVALUE from reward_type, rewards where REWARD_TYPE.reward_cat_code = REWARDS.reward_cat_code and REWARDS.LP_CODE='"+BrandLandingInterface.loggedInBrand.getLpCode()+"'";
             result = statement.executeQuery(getRewardsList);
             Reward reward = null;
             while (result.next()) {
@@ -357,7 +415,7 @@ public class BrandLandingInterface {
             System.out.println("Choose your Loyalty program code: \n");
             lpCode = sc.nextLine();
             System.out.println(lpCode);
-            String sql_check = "Select lp_code from brand where brand_id= '"+BrandLandingInterface.loggedInBrand.getBrandId()+"'";
+            String sql_check = "Select lp_code from brand where brand_id = '"+BrandLandingInterface.loggedInBrand.getBrandId()+"'";
             result = statement.executeQuery(sql_check);
             result.next();
             int foo = result.getObject("LP_CODE") != null ? result.getInt("LP_CODE") : -1;
@@ -438,16 +496,22 @@ public class BrandLandingInterface {
             String sql_check = "Select RE_RULE_CODE,RULE_VERSION from RE_RULES where RE_RULE_CODE= '"+RECode+"' AND RULE_VERSION = '"+RECodeVersion+"'";
             // System.out.println(sqlCred);
             result = statement.executeQuery(sql_check);
+            firstCheck = true;
         } while (result.next() == true);
-        System.out.println(" Enter Points Earned by performing activity \n");
+        System.out.println(activity.getActivityName());
+        if(activity.getActivityName().equals("Purchase") || activity.getActivityName().equals("purchase") ){
+            System.out.println("Enter point multiplier for the purchase (integer)");
+        } else{
+            System.out.println(" Enter Points Earned by performing activity \n");
+        }
         int pointsRewarded = sc.nextInt();
         sc.nextLine();
 
         PreparedStatement ps = BrandLandingInterface.conn
-        .prepareStatement("INSERT INTO RE_RULES (RE_RULE_CODE, LP_CODE,ACT_CAT_CODE,RULE_VERSION,POINTS,ACTIVITY_NAME) VALUES (?,?,?,?,?,?);");
+        .prepareStatement("INSERT INTO RE_RULES (RE_RULE_CODE, LP_CODE,ACT_CAT_CODE,RULE_VERSION,POINTS,ACTIVITY_NAME) VALUES (?,?,?,?,?,?)");
 
         ps.setString(1, RECode);
-        ps.setString(2, BrandLandingInterface.loggedInBrand.getBrandId());
+        ps.setString(2, BrandLandingInterface.loggedInBrand.getLpCode());
         ps.setString(3, activity.getActivityCode());
         ps.setInt(4, RECodeVersion);
         ps.setInt(5, pointsRewarded);
@@ -658,26 +722,31 @@ public class BrandLandingInterface {
     }
 
     static boolean validateLoyaltyProgram() throws SQLException{
-        System.out.println("Initializing Loyalty program validation...");
-        String vaidationSQL = "SELECT  LP_CODE, LP_NAME, TIER1, TIER2, TIER3, MULT1, MULT2, MULT3, POINTS_REQ_TIER1, POINTS_REQ_TIER2, POINTS_REQ_TIER3, ISTIERED  WHERE BRAND_ID = '"+BrandLandingInterface.loggedInBrand.getBrandId()+"'";
+        System.out.println("\nInitializing Loyalty program validation...");
+        String vaidationSQL = "SELECT  LP_CODE, LP_NAME, TIER1, TIER2, TIER3, MULT1, MULT2, MULT3, POINTS_REQ_TIER1, POINTS_REQ_TIER2, POINTS_REQ_TIER3, ISTIERED FROM BRAND WHERE BRAND_ID = '"+BrandLandingInterface.loggedInBrand.getBrandId()+"'";
         // System.out.println(sqlCred);
         result = statement.executeQuery(vaidationSQL);
         result.next();
         int isTiered = result.getInt("ISTIERED");
         if(isTiered == 0){
+            System.out.println("Looks like you have Regular Loyalty Program..");
             return true;
         }else if(isTiered == 1){
+            System.out.println("Looks like you have Tiered Loyalty Program..");
             int numTiers = 0;
             String tier3 = result.getString("TIER3");
-            int foo = result.getObject("LP_CODE") != null ? result.getInt("LP_CODE") : -1;
-            if(foo == -1){
+            if(tier3 == null){
                 numTiers = 2;
-            } else{
-                numTiers = 3;
+                System.out.println("Found 2 tiers...");
             }
+            else{
+                numTiers = 3;
+                System.out.println("Found 3 tiers...");
+            }
+            
             int[] multiplier  = new int[3];
             int[] pointsRequired = new int[3];
-            int mult1,mult2,mult3,point1,point2,point3;
+            int mult1,mult2,point1,point2;
             if(numTiers == 3){
                 multiplier[0] = result.getInt("MULT1");
                 multiplier[1] = result.getInt("MULT2");
@@ -687,18 +756,18 @@ public class BrandLandingInterface {
                 pointsRequired[2] = result.getInt("POINTS_REQ_TIER3");
                 boolean mult = false;
                 boolean points = false;
-                int i=0;
-                for (i = 0; i < multiplier.length; i++); { 
-                    if (multiplier[i] < multiplier[i + 1]) {
+                System.out.println("Checking if Multipliers are in increasing order... ");
+                for(int i=0;i<multiplier.length-1;i++){
+                    if (multiplier[i] < multiplier[i+1]) {
                         mult = true;
                     }
                     else {
                         mult =  false;
                     }
                 }
-
-                for (i = 0; i < pointsRequired.length; i++); { 
-                    if (pointsRequired[i] < pointsRequired[i + 1]) {
+                System.out.println("Checking if Points requires are in increasing order...");
+                for(int i=0;i<pointsRequired.length-1;i++){
+                    if (pointsRequired[i] < pointsRequired[i+1]) {
                         points = true;
                     }
                     else {
@@ -706,17 +775,21 @@ public class BrandLandingInterface {
                     }
                 }
 
+                
                 return (mult && points);
 
             } else{
+                
                 mult1 = result.getInt("MULT1");
                 mult2 = result.getInt("MULT2");
-                
+                System.out.println("Checking if Multipliers are in increasing order...");
                 point1 = result.getInt("POINTS_REQ_TIER1");
                 point2 = result.getInt("POINTS_REQ_TIER2");
+                System.out.println("Checking if Points requires are in increasing order...");
                 if(mult1 < mult2 && point1 < point2){
                    return true;
                 } else{
+                    System.out.println("Bad order");
                     return false;
                 }
             }

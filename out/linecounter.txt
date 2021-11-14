@@ -1,0 +1,86 @@
+===============================================================================
+EXTENSION NAME : linecounter
+EXTENSION VERSION : 0.2.7
+-------------------------------------------------------------------------------
+count time : 2021-11-13 15:31:25
+count workspace : c:\Users\princ\Documents\NCSU\DBMS\Customer Loyalty Program
+total files : 23
+total code lines : 2580
+total comment lines : 53
+total blank lines : 490
+
+    statistics
+   |      extension|     total code|  total comment|    total blank|percent|
+   -------------------------------------------------------------------------
+   |           .sql|             91|              0|             24|    3.5|
+   |               |              1|              0|              0|  0.039|
+   |          .java|           2486|             53|            465|     96|
+   |            .md|              2|              0|              1|  0.078|
+   -------------------------------------------------------------------------
+.gitignore, code is 1, comment is 0, blank is 0.
+Codebase\AddInfo.java, code is 120, comment is 0, blank is 36.
+Codebase\AdminLanding.java, code is 218, comment is 3, blank is 34.
+Codebase\BrandLandingInterface.java, code is 710, comment is 36, blank is 83.
+Codebase\CustomerLanding.java, code is 350, comment is 7, blank is 53.
+Codebase\EnrollLoyaltyProgram.java, code is 100, comment is 1, blank is 21.
+Codebase\Home.java, code is 56, comment is 0, blank is 8.
+Codebase\Inititlize.java, code is 32, comment is 0, blank is 7.
+Codebase\Login.java, code is 101, comment is 2, blank is 12.
+Codebase\POJO\Activity.java, code is 21, comment is 0, blank is 10.
+Codebase\POJO\Brand.java, code is 37, comment is 0, blank is 12.
+Codebase\POJO\CustomerWallet.java, code is 3, comment is 0, blank is 2.
+Codebase\POJO\LoggedInBrand.java, code is 45, comment is 0, blank is 7.
+Codebase\POJO\LoggedInUser.java, code is 29, comment is 0, blank is 15.
+Codebase\POJO\LoyaltyProgram.java, code is 21, comment is 0, blank is 9.
+Codebase\POJO\ReRule.java, code is 54, comment is 0, blank is 19.
+Codebase\POJO\Reward.java, code is 49, comment is 0, blank is 23.
+Codebase\ShowInfo.java, code is 111, comment is 2, blank is 33.
+Codebase\showQueries.java, code is 158, comment is 0, blank is 29.
+Codebase\SignUp.java, code is 207, comment is 2, blank is 34.
+Codebase\ViewWallet.java, code is 64, comment is 0, blank is 18.
+Readme.md, code is 2, comment is 0, blank is 1.
+SQL files\Create_tables.sql, code is 91, comment is 0, blank is 24.
+===============================================================================
+===============================================================================
+EXTENSION NAME : linecounter
+EXTENSION VERSION : 0.2.7
+-------------------------------------------------------------------------------
+count time : 2021-11-13 18:49:34
+count workspace : c:\Users\princ\Documents\NCSU\DBMS\Customer Loyalty Program
+total files : 23
+total code lines : 2719
+total comment lines : 54
+total blank lines : 515
+
+    statistics
+   |      extension|     total code|  total comment|    total blank|percent|
+   -------------------------------------------------------------------------
+   |          .java|           2625|             54|            490|     97|
+   |            .md|              2|              0|              1|  0.074|
+   |               |              1|              0|              0|  0.037|
+   |           .sql|             91|              0|             24|    3.3|
+   -------------------------------------------------------------------------
+.gitignore, code is 1, comment is 0, blank is 0.
+Codebase\AddInfo.java, code is 120, comment is 0, blank is 36.
+Codebase\AdminLanding.java, code is 218, comment is 3, blank is 34.
+Codebase\BrandLandingInterface.java, code is 710, comment is 36, blank is 83.
+Codebase\CustomerLanding.java, code is 489, comment is 8, blank is 78.
+Codebase\EnrollLoyaltyProgram.java, code is 100, comment is 1, blank is 21.
+Codebase\Home.java, code is 56, comment is 0, blank is 8.
+Codebase\Inititlize.java, code is 32, comment is 0, blank is 7.
+Codebase\Login.java, code is 101, comment is 2, blank is 12.
+Codebase\POJO\Activity.java, code is 21, comment is 0, blank is 10.
+Codebase\POJO\Brand.java, code is 37, comment is 0, blank is 12.
+Codebase\POJO\CustomerWallet.java, code is 3, comment is 0, blank is 2.
+Codebase\POJO\LoggedInBrand.java, code is 45, comment is 0, blank is 7.
+Codebase\POJO\LoggedInUser.java, code is 29, comment is 0, blank is 15.
+Codebase\POJO\LoyaltyProgram.java, code is 21, comment is 0, blank is 9.
+Codebase\POJO\ReRule.java, code is 54, comment is 0, blank is 19.
+Codebase\POJO\Reward.java, code is 49, comment is 0, blank is 23.
+Codebase\ShowInfo.java, code is 111, comment is 2, blank is 33.
+Codebase\showQueries.java, code is 158, comment is 0, blank is 29.
+Codebase\SignUp.java, code is 207, comment is 2, blank is 34.
+Codebase\ViewWallet.java, code is 64, comment is 0, blank is 18.
+Readme.md, code is 2, comment is 0, blank is 1.
+SQL files\Create_tables.sql, code is 91, comment is 0, blank is 24.
+===============================================================================

@@ -48,8 +48,7 @@ public class Login {
                     walletId = result.getString("WALLET_ID");
                     result = statement.executeQuery(sqlCred);
                 } else if(userType.equals("Brand")){
-                    String sqlCred = "select BRAND_NAME,LP_CODE,LP_NAME,ISTIERED from customer where brand_id='"+userId+"'";
-                    System.out.println(sqlCred);
+                    String sqlCred = "select BRAND_NAME,LP_CODE,LP_NAME,ISTIERED from BRAND where brand_id='"+userId+"'";
                     result = statement.executeQuery(sqlCred);
                     result.next();
                     String brandId = userId;
