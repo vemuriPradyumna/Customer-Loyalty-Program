@@ -14,6 +14,7 @@ public class AddInfo {
     static void addActivityType (Connection conn) throws SQLException{
         
         int selection = 0;
+        boolean flag = true;
         try {
         do{
         
@@ -21,7 +22,7 @@ public class AddInfo {
             System.out.println("\n2. GO BACK\n");
             selection = sc.nextInt();
             sc.nextLine();
-
+           
             switch (selection) {
                 case 1:
                     SignUp.conn = conn;
@@ -47,7 +48,8 @@ public class AddInfo {
                     }
                     break;
                 case 2:
-                    AdminLanding.AdminLandingInterface(conn);
+                    //AdminLanding.AdminLandingInterface(conn);
+                    flag = false;
                     break;
 
                 default:
@@ -56,7 +58,7 @@ public class AddInfo {
 
         
     
-    }while(true);
+    }while(flag);
 }catch (Exception e) {
     e.printStackTrace();
     e.getMessage();
@@ -70,6 +72,7 @@ public class AddInfo {
 static void addRewardType (Connection conn) throws SQLException{
         
     int selection = 0;
+    boolean flag1 = true;
     try {
     do{
     
@@ -103,7 +106,8 @@ static void addRewardType (Connection conn) throws SQLException{
                 }
                 break;
             case 2:
-                AdminLanding.AdminLandingInterface(conn);
+                //AdminLanding.AdminLandingInterface(conn);
+                flag1 = false;
                 break;
 
             default:
@@ -112,7 +116,7 @@ static void addRewardType (Connection conn) throws SQLException{
 
     
 
-}while(true);
+}while(flag1);
 }catch (Exception e) {
 e.printStackTrace();
 e.getMessage();
