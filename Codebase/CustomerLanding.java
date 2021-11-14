@@ -10,10 +10,21 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import Codebase.POJO.Activity;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import javax.naming.ldap.StartTlsRequest;
+import javax.naming.spi.DirStateFactory.Result;
+import javax.swing.plaf.synth.SynthStyle;
+
 import Codebase.POJO.LoggedInUser;
 import Codebase.POJO.LoyaltyProgram;
 import Codebase.POJO.ReRule;
 import Codebase.POJO.Reward;
+import java.util.Calendar;
+import java.util.Date;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -55,11 +66,10 @@ public class CustomerLanding {
                         break;
                     case 3:
                         System.out.println("View Wallet....");
-                        //ViewWallet.ViewWalletInterface(conn, loggedInUser);
                         ViewWalletInterface(conn, loggedInUser);
                         break;
                     case 4:
-                        rewardRedeeming(conn, loggedInUser);
+                        redeemPoints(conn, loggedInUser);
                         break;
                     case 5:
                         System.out.println("Exiting.........");
@@ -129,15 +139,23 @@ public class CustomerLanding {
                             result3.next();
                             lp1 = result3.getString("lp_code");
 
-                            ResultSet result4 = null;
-                            statement.executeQuery("INSERT INTO cust_wallet(lp_code,wallet_id,cust_id) VALUES ('"+lp1+"','"+wallet+"','"+loggedInUser.getUser_Id()+"')");
+                            //ResultSet result4 = null;
+                            statement.executeQuery("INSERT INTO cust_wallet(lp_code,current_points,wallet_id,cust_id) VALUES ('"+lp1+"',0,'"+wallet+"','"+loggedInUser.getUser_Id()+"')");
+                            System.out.println("Your Wallet for this Loyalty Program has been created!\n");
                             
-                            System.out.println("Your Wallet for this Loyalty Program is: \n");
+                            ResultSet r = statement.executeQuery("SELECT tier1, mult1 from brand WHERE lp_code = '"+lp1+"'");
+                            r.next();
+                            String tier = r.getString("tier1");
+                            String mult = r.getString("mult1");
+
+                            statement.executeQuery("INSERT INTO tier_status_update(wallet_id,lp_code,tier_status,tier_mult,cust_id) VALUES('"+wallet+"','"+lp1+"','"+tier+"','"+mult+"','"+loggedInUser.getUser_Id()+"')");
+
+                            /*System.out.println("Your Wallet for this Loyalty Program is: \n");
 
                             result4 = statement.executeQuery("SELECT * FROM cust_wallet WHERE lp_code = '"+lp1+"' AND wallet_id = '"+wallet+"'");
                             while(result4.next()){
                                 System.out.println("\n"+"Loyalty Program code: "+result4.getString("lp_code")+"\n"+"Points accumulated: "+result4.getString("points_acc")+"\n"+"Current Points: "+result4.getString("current_points")+"\n"+"Wallet ID: "+result4.getString("wallet_id")+"\nCustomer ID : "+result.getString("cust_id")+"\n");
-                            }
+                            }*/
                             flag = false;
                         }
                         break;
@@ -177,11 +195,11 @@ public class CustomerLanding {
                
                 }
     
-                System.out.println("\n1. Go back\n");
-                selection = sc.nextInt();
-                sc.nextLine();                
+                System.out.println("\n1. Go back\n");                
             
                 do{
+                    selection = sc.nextInt();
+                    sc.nextLine();
                     switch (selection) {
                         case 1:
                             flag = false;
@@ -534,6 +552,133 @@ public class CustomerLanding {
 				e.printStackTrace();
 			}
         }
+    }
+
+    static void redeemPoints(Connection conn,LoggedInUser loggedInUser) throws SQLException{
+
+        int selection = 0;
+        Scanner sc = new Scanner(System.in);
+        boolean flag = true;
+        String lp = null;
+        String reward = null;
+        boolean stepone = false;
+        boolean steptwo = false;
+        boolean stepthree = false;
+        int count;
+        try {
+            
+            statement = conn.createStatement();
+            System.out.println("\t\t Loyalty Program you are enrolled in: \n");
+
+            String sql_check = "SELECT DISTINCT lp_name FROM Brand WHERE lp_code IN (SELECT lp_code FROM cust_wallet WHERE cust_id = '"+loggedInUser.getUser_Id()+"')";
+            result = statement.executeQuery(sql_check);
+           // ResultSet dummy = result;
+       
+                    while (result.next()){
+       
+                        System.out.println("\n"+result.getString("lp_name")+"\n");
+       
+                    }
+            System.out.println("Please enter a Loyalty Program of your choice to redeem points:\n");
+            lp = sc.nextLine();
+
+           /*while(dummy.next()){
+                if(lp.equals(dummy.getString("lp_name"))){
+                    stepone = true;
+                    break;
+                }
+            }*/
+
+            ResultSet result01 = null;
+            result01 = statement.executeQuery("SELECT reward_name FROM reward_type WHERE reward_cat_code IN (SELECT reward_cat_code FROM rewards WHERE lp_code IN (SELECT lp_code FROM brand WHERE lp_name = '"+lp+"') AND no_instances > 0 )");
+          //  ResultSet dummy2 = result01;
+            while(result01.next()){
+                System.out.println(result01.getString("reward_name")+"\n");
+            }
+            System.out.println("Please enter a Reward to redeem:\n");
+            reward = sc.nextLine();
+
+           /* ResultSet result03 = null;
+            result03 = statement.executeQuery("SELECT datavalue from rewards where lp_code IN (SELECT lp_code FROM brand WHERE lp_name = '"+lp+"') AND reward_cat_code IN (SELECT reward_cat_code FROM reward_type WHERE reward_name = '"+reward+"')");
+            String datavalue;
+            System.out.println("These are the "+reward+" avaiable from Loyalty program "+lp+"\n\n");
+            while(result03.next()){
+                System.out.println(result03.getString("datavalue")+"\n");
+            }
+            System.out.println("\nSelect one:\n");
+            datavalue = sc.nextLine();
+            /*while(dummy2.next()){
+                if(reward.equals(dummy2.getString("reward_name"))){
+                     steptwo = true;
+                     break;
+                }
+            }*/
+            ResultSet result02 = null;
+            result02 = statement.executeQuery("SELECT no_instances FROM rewards WHERE lp_code IN (SELECT lp_code FROM brand WHERE lp_name='"+lp+"') AND reward_cat_code IN (SELECT reward_cat_code FROM reward_type WHERE reward_name='"+reward+"')");
+            System.out.println("Please enter the quantity of Reward:\n");
+            count = sc.nextInt();
+            result02.next();
+            /*if(count <= result02.getInt("no_instances")){
+                stepthree = true;
+            }*/
+        
+            System.out.println("\n1. Redeem the selected Reward?\n");
+            System.out.println("\n2. Go back\n");
+            selection = sc.nextInt();
+            sc.nextLine();                
+            do{
+                switch (selection) {
+                    case 1:
+
+                        int curr_pts;
+                        String sql01 = "SELECT current_points FROM cust_wallet WHERE cust_id = '"+loggedInUser.getUser_Id()+"' AND lp_code IN (SELECT lp_code FROM brand WHERE lp_name = '"+lp+"')";
+                        ResultSet r1 = statement.executeQuery(sql01);
+                        r1.next();
+                        curr_pts = r1.getInt("current_points");
+                        System.out.println("Points in your wallet: "+curr_pts);
+
+                        int cost;
+                        String sql02 = " SELECT points FROM rr_rules WHERE lp_code IN (SELECT lp_code FROM brand WHERE lp_name = '"+lp+"') AND reward_cat_code IN (SELECT reward_cat_code FROM reward_type WHERE reward_name = '"+reward+"')";
+                        ResultSet r2 = statement.executeQuery(sql02);
+                        r2.next();
+                        cost = r2.getInt("points");
+                        System.out.println("Points needed for the Reward: "+ cost);
+
+                        if(curr_pts >= cost){
+                            String sql = "SELECT RT.reward_cat_code, R.datavalue, RR.rr_rule_code, RR.points, RR.lp_code FROM reward_type RT INNER JOIN rewards R ON RT.reward_cat_code = R.reward_cat_code INNER JOIN rr_rules RR ON RR.reward_cat_code = r.reward_cat_code AND rr.lp_code = r.lp_code WHERE r.lp_code IN (SELECT lp_code FROM brand WHERE lp_name = '"+lp+"') and r.reward_cat_code = (SELECT reward_cat_code FROM reward_type WHERE reward_name = '"+reward+"')";
+                            ResultSet main =  null;     
+                            main = statement.executeQuery(sql);
+                            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MMM-yy");
+                            LocalDateTime now = LocalDateTime.now();
+                            LocalDateTime exp = now.plusDays(60);
+                            main.next();
+                            String sql2 = "INSERT INTO customer_reward_log(reward_cat_code,cust_id, datavalue, date_of_reward, rr_rule_code, rr_points, lp_code, expirydate, isused) VALUES('"+main.getString("reward_cat_code")+"','"+loggedInUser.getUser_Id()+"','"+main.getString("datavalue")+"','"+dtf.format(now)+"','"+main.getString("rr_rule_code")+"','"+main.getString("points")+"','"+main.getString("lp_code")+"','"+dtf.format(exp)+"',0)"; 
+                            //System.out.println(main.getString("reward_cat_code")+","+loggedInUser.getUser_Id()+","+main.getString("datavalue")+","+dtf.format(now)+","+main.getString("rr_rule_code")+","+main.getString("points")+","+dtf.format(exp));
+                            ResultSet main1 = statement.executeQuery(sql2);
+                            flag = false;
+                        }
+                        else{
+                            System.out.println("\nYou dont have enought points to redeem the selected Reward! \n");
+                            flag = false;
+                        }
+  
+                        break;
+                    case 2:
+                        System.out.println("Exiting....");
+                        flag = false;
+                        break;
+                    default:
+                        System.out.println("You have entered an incorrect selection try again");
+                }
+            }while(flag);
+        }catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(result);
+            close(statement);
+        }
+
+
     }
 
     static void close(Connection connection) {
