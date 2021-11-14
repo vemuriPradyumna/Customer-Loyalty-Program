@@ -21,7 +21,7 @@ public class EnrollLoyaltyProgram {
             statement = conn.createStatement();
             System.out.println("\t\t All the available Loyalty Program: \n");
 
-            String sql_check = "SELECT DISTINCT lp_name FROM Brand WHERE lp_name IS NOT NULL";
+            String sql_check = "SELECT DISTINCT lp_name FROM Brand WHERE lp_name IS NOT NULL and ACTIVE_FLAG=1";
             result = statement.executeQuery(sql_check);
        
                     while (result.next()){

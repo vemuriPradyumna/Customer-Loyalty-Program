@@ -357,6 +357,7 @@ public class BrandLandingInterface {
             String getRewardsList = "select REWARD_TYPE.REWARD_CAT_CODE,REWARD_TYPE.REWARD_NAME,REWARDS.DATAVALUE from reward_type, rewards where REWARD_TYPE.reward_cat_code = REWARDS.reward_cat_code and REWARDS.LP_CODE='"+BrandLandingInterface.loggedInBrand.getLpCode()+"'";
             result = statement.executeQuery(getRewardsList);
             Reward reward = null;
+            rewards.clear();
             while (result.next()) {
                 reward = new Reward(result.getString("REWARD_CAT_CODE"), result.getString("REWARD_NAME"));
                 rewards.add(reward);
@@ -543,7 +544,7 @@ public class BrandLandingInterface {
             System.out.println("Enter version number");
             RRCodeVersion = sc.nextInt();
             sc.nextLine();
-            String sql_check = "Select RR_RULE_CODE,RULE_VERSION from RR_RULES where RE_RULE_CODE= '"+RRCode+"' AND RULE_VERSION = '"+RRCodeVersion+"'";
+            String sql_check = "Select RR_RULE_CODE,RULE_VERSION from RR_RULES where RR_RULE_CODE= '"+RRCode+"' AND RULE_VERSION = '"+RRCodeVersion+"'";
             // System.out.println(sqlCred);
             result = statement.executeQuery(sql_check);
         } while (result.next() == true);
@@ -552,7 +553,7 @@ public class BrandLandingInterface {
         sc.nextLine();
 
         PreparedStatement ps = BrandLandingInterface.conn
-        .prepareStatement("INSERT INTO RR_RULES (RR_RULE_CODE, LP_CODE,REWARD_CAT_CODE,RULE_VERSION,POINTS,REWARD_NAME) VALUES (?,?,?,?,?,?);");
+        .prepareStatement("INSERT INTO RR_RULES (RR_RULE_CODE, LP_CODE,REWARD_CAT_CODE,RULE_VERSION,POINTS,REWARD_NAME) VALUES (?,?,?,?,?,?)");
 
         ps.setString(1, RRCode);
         ps.setString(2, BrandLandingInterface.loggedInBrand.getLpCode());
@@ -626,7 +627,7 @@ public class BrandLandingInterface {
 
         
         PreparedStatement ps = BrandLandingInterface.conn
-        .prepareStatement("INSERT INTO RR_RULES (RR_RULE_CODE, LP_CODE,REWARD_CAT_CODE,RULE_VERSION,POINTS,REWARD_NAME) VALUES (?,?,?,?,?,?);");
+        .prepareStatement("INSERT INTO RR_RULES (RR_RULE_CODE, LP_CODE,REWARD_CAT_CODE,RULE_VERSION,POINTS,REWARD_NAME) VALUES (?,?,?,?,?,?)");
 
         ps.setString(1, RRCode);
         ps.setString(2, BrandLandingInterface.loggedInBrand.getLpCode());
@@ -676,6 +677,7 @@ public class BrandLandingInterface {
             // System.out.println(sqlCred);
             result = statement.executeQuery(getActivityList);
             Activity activity = null;
+            activities.clear();
             while (result.next()) {
                 activity = new Activity(result.getString("ACT_CAT_CODE"), result.getString("ACT_NAME"));
                 activities.add(activity);
@@ -701,7 +703,7 @@ public class BrandLandingInterface {
         sc.nextLine();
         
         PreparedStatement ps = BrandLandingInterface.conn
-        .prepareStatement("INSERT INTO RE_RULES (RE_RULE_CODE, LP_CODE,ACT_CAT_CODE,RULE_VERSION,POINTS,ACTIVITY_NAME) VALUES (?,?,?,?,?,?);");
+        .prepareStatement("INSERT INTO RE_RULES (RE_RULE_CODE, LP_CODE,ACT_CAT_CODE,RULE_VERSION,POINTS,ACTIVITY_NAME) VALUES (?,?,?,?,?,?)");
 
         ps.setString(1, ReCode);
         ps.setString(2, BrandLandingInterface.loggedInBrand.getBrandId());

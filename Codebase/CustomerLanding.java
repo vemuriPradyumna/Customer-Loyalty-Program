@@ -39,7 +39,8 @@ public class CustomerLanding {
     public static Calendar calendar = Calendar.getInstance();
     public static Date currentTime;
 
-    public static void CustomerLandingInterface(Connection conn, LoggedInUser loggedInUser){       
+    public static void CustomerLandingInterface(Connection conn, LoggedInUser loggedInUser){   
+            
             CustomerLanding.loggedInUser = loggedInUser;
             try {
                 CustomerLanding.conn = conn;
@@ -73,6 +74,8 @@ public class CustomerLanding {
                         break;
                     case 5:
                         System.out.println("Exiting.........");
+                        close(result);
+                        close(statement);
                         main_flag = false;
                         break;  
                     default:
@@ -98,7 +101,7 @@ public class CustomerLanding {
             statement = conn.createStatement();
             System.out.println("\t\t All the available Loyalty Program: \n");
 
-            String sql_check = "SELECT DISTINCT lp_name FROM Brand WHERE lp_name IS NOT NULL";
+            String sql_check = "SELECT DISTINCT lp_name FROM Brand WHERE lp_name IS NOT NULL and ACTIVE_FLAG=1";
             result = statement.executeQuery(sql_check);
        
                     while (result.next()){
@@ -170,8 +173,8 @@ public class CustomerLanding {
         }catch (Exception e) {
             e.printStackTrace();
         } finally {
-            close(result);
-            close(statement);
+            //close(result);
+            //close(statement);
         }
 
 
@@ -212,8 +215,8 @@ public class CustomerLanding {
         }catch (Exception e) {
             e.printStackTrace();
         } finally {
-            close(result);
-            close(statement);
+            //close(result);
+            //close(statement);
         }
     
         }
@@ -222,6 +225,7 @@ public class CustomerLanding {
         int selection = 0;
         boolean flag = true;
         ArrayList<LoyaltyProgram> lpList = new ArrayList<>();
+        statement = conn.createStatement();
         do {
             String getEnrolledLoyaltyPrograms = "select BRAND.LP_NAME,BRAND.LP_CODE from Brand,cust_wallet where BRAND.LP_CODE = CUST_WALLET.LP_CODE AND CUST_WALLET.WALLET_ID = '"+CustomerLanding.loggedInUser.getWalletId()+"'";
 
@@ -229,6 +233,7 @@ public class CustomerLanding {
             result = statement.executeQuery(getEnrolledLoyaltyPrograms);
             String lpCode = null;
             String lpName = null;
+            lpList.clear();
             while (result.next()) {
                 lpCode = result.getString("LP_CODE");
                 lpName = result.getString("LP_NAME");
@@ -254,6 +259,7 @@ public class CustomerLanding {
 
     
     static void performRewardActivities(LoyaltyProgram loyaltyProgram) throws SQLException{
+        statement = conn.createStatement();
         int selection = 0;
         boolean flag = true;
         System.out.println("\nFetching Activity list from the loyalty program...");
@@ -266,6 +272,7 @@ public class CustomerLanding {
             
             System.out.println("\t\t List of available activities in the selected loyalty program\n");
             Activity activity;
+            activities.clear();
             while (result.next()) {
                 activity = new Activity(result.getString("ACT_CAT_CODE"), result.getString("ACT_NAME"));
                 activities.add(activity);
@@ -277,7 +284,7 @@ public class CustomerLanding {
             selection = sc.nextInt();
             sc.nextLine();
             if(selection>0 && selection<=activities.size()){
-                
+                DoActivity(activities.get(selection-1), loyaltyProgram);
             } else if(selection == activities.size()+1){
                 flag = false;
             } else{
@@ -287,16 +294,24 @@ public class CustomerLanding {
     }
 
     static void DoActivity(Activity activity,LoyaltyProgram loyaltyProgram) throws SQLException{
+        statement = conn.createStatement();
         String getMultiplierTier = "select tier_mult from tier_status_update where lp_code = '"+loyaltyProgram.getLpCode()+"' and cust_id='"+CustomerLanding.loggedInUser.getUser_Id()+"'";
         result = statement.executeQuery(getMultiplierTier);
+        result.next();
         int tierMult = result.getInt("tier_mult");
+        ArrayList<Integer> custRewardLogId = new ArrayList<>();
         if(activity.getActivityName().equals("Purchase") || activity.getActivityName().equals("Purchase")){
             System.out.println("Enter the purchase amount");
             int amount = sc.nextInt();
             sc.nextLine();
             System.out.println("Checking if you have any gift cards...");
-            String getGiftCard = "select reward_cat_code, datavalue from customer_reward_log where customer_reward_log.expirydate > current_timestamp and REWARD_CAT_CODE = 'R2' and cust_id='"+CustomerLanding.loggedInUser.getUser_Id()+"'";
-            String getGiftCardCount = "select count(*) as rowcount from customer_reward_log where customer_reward_log.expirydate > current_timestamp and REWARD_CAT_CODE = 'R2' and cust_id='"+CustomerLanding.loggedInUser.getUser_Id()+"'";
+            String getGiftCard = "select reward_cat_code, datavalue,CUST_REWARD_LOG from customer_reward_log where customer_reward_log.expirydate > current_timestamp and REWARD_CAT_CODE = 'R2' and cust_id='"+CustomerLanding.loggedInUser.getUser_Id()+"' and ISUSED = 0 and LP_CODE='"+loyaltyProgram.getLpCode()+"'";
+            
+            result = statement.executeQuery(getGiftCard);
+            while(result.next()){
+                custRewardLogId.add(result.getInt("CUST_REWARD_LOG"));
+            }
+            String getGiftCardCount = "select count(*) as rowcount from customer_reward_log where customer_reward_log.expirydate > current_timestamp and REWARD_CAT_CODE = 'R2' and cust_id='"+CustomerLanding.loggedInUser.getUser_Id()+"' and ISUSED = 0 LP_CODE='"+loyaltyProgram.getLpCode()+"'";
             // System.out.println(sqlCred);
             result = statement.executeQuery(getGiftCard);
             if (!result.next()){
@@ -306,6 +321,7 @@ public class CustomerLanding {
                 System.out.println("Total value of purchase made is "+amount);
                 String getMultiplier = "select points,re_rule_code from re_rules where lp_code = '"+loyaltyProgram.getLpCode()+"' and ACT_CAT_CODE='A01'";
                 result = statement.executeQuery(getMultiplier);
+                result.next();
                 int pointMult = result.getInt("Points");
                 String re_code = result.getString("re_rule_code");
                 int pointsToBeAdded = (amount)*pointMult;
@@ -313,7 +329,7 @@ public class CustomerLanding {
 
 
                 PreparedStatement ps = CustomerLanding.conn
-                .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,data_value,date_of_activity,re_rule_code,re_points) VALUES (?,?,?,?,?,?)");
+                .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,datavalue,date_of_activity,re_rule_code,re_points,lp_code) VALUES (?,?,?,?,?,?,?)");
                 ps.setString(1, activity.getActivityCode());
                 ps.setString(2, CustomerLanding.loggedInUser.getUser_Id());
                 ps.setString(3, Integer.toString(amount));
@@ -323,6 +339,7 @@ public class CustomerLanding {
                 ps.setTimestamp(4, new Timestamp(time));
                 ps.setString(5, re_code);
                 ps.setInt(6, pointsToBeAdded*tierMult);
+                ps.setString(7, loyaltyProgram.getLpCode());
 
                 
 
@@ -340,6 +357,7 @@ public class CustomerLanding {
                 int countGift = 0;
                 giftCardValue = Integer.parseInt(result.getString("datavalue"));
                 result = statement.executeQuery(getGiftCardCount);
+                result.next();
                 countGift = result.getInt("rowcount");
                 System.out.println("Found "+countGift+" gift cards with value of "+giftCardValue);
                 System.out.println("\nWould you like to use your gift cards for the purchase?");
@@ -361,7 +379,23 @@ public class CustomerLanding {
                 } else{
                     System.out.println("Proceeding to transaction without gift cards...");
                     response = 0;
-                }
+                }   
+                    for(int i=0;i<response;i++){
+                        PreparedStatement ps = CustomerLanding.conn
+                        .prepareStatement("Update customer_reward_log set isused = 1 where Reward_cat_code = 'R2' and CUST_ID=? and CUST_REWARD_LOG=?");
+                        ps.setString(1, CustomerLanding.loggedInUser.getUser_Id());
+                        ps.setInt(2, custRewardLogId.get(i));
+    
+                        int id1 = ps.executeUpdate();
+                
+                        System.out.println(id1);
+                
+                        if (id1 > 0) {
+                            System.out.println("Redeemed gift card(s)");
+                        } else {
+                            System.out.println("Row not found");
+                        }
+                    }
                     System.out.println("Total value of gift cards chosen is "+giftCardValue*response);
                     if(amount <= giftCardValue*response){
                         System.out.println("Your purchase has been made with the use of gift cards completely. \n Total bill 0$");
@@ -369,11 +403,12 @@ public class CustomerLanding {
                         System.out.println("Total value of purchase made is "+(amount - giftCardValue*response));
                         String getMultiplier = "select points,re_rule_code from re_rules where lp_code = '"+loyaltyProgram.getLpCode()+"' and ACT_CAT_CODE='A01'";
                         result = statement.executeQuery(getMultiplier);
+                        result.next();
                         int pointMult = result.getInt("Points");
                         String re_code = result.getString("re_rule_code");
                         int pointsToBeAdded = (amount - giftCardValue*response)*pointMult;
                         PreparedStatement ps = CustomerLanding.conn
-                        .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,data_value,date_of_activity,re_rule_code,re_points) VALUES (?,?,?,?,?,?)");
+                        .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,datavalue,date_of_activity,re_rule_code,re_points,lp_code) VALUES (?,?,?,?,?,?,?)");
                         ps.setString(1, activity.getActivityCode());
                         ps.setString(2, CustomerLanding.loggedInUser.getUser_Id());
                         ps.setString(3, Integer.toString(amount));
@@ -383,7 +418,7 @@ public class CustomerLanding {
                         ps.setTimestamp(4, new Timestamp(time));
                         ps.setString(5, re_code);
                         ps.setInt(6, pointsToBeAdded*tierMult);
-
+                        ps.setString(7, loyaltyProgram.getLpCode());
                         
     
                         int id1 = ps.executeUpdate();
@@ -404,10 +439,11 @@ public class CustomerLanding {
             String review = sc.nextLine();
             String getPointsForActivity = "select points,re_rule_code from re_rules where lp_code = '"+loyaltyProgram.getLpCode()+"' and ACT_CAT_CODE='A02'";
             result = statement.executeQuery(getPointsForActivity);
+            result.next();
             int points = result.getInt("Points");
             String recode = result.getString("re_rule_code");
             PreparedStatement ps = CustomerLanding.conn
-            .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,data_value,date_of_activity,re_rule_code,re_points) VALUES (?,?,?,?,?,?)");
+            .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,datavalue,date_of_activity,re_rule_code,re_points,lp_code) VALUES (?,?,?,?,?,?,?)");
             ps.setString(1, activity.getActivityCode());
             ps.setString(2, CustomerLanding.loggedInUser.getUser_Id());
             ps.setString(3, review);
@@ -417,16 +453,28 @@ public class CustomerLanding {
             ps.setTimestamp(4, new Timestamp(time));
             ps.setString(5, recode);
             ps.setInt(6, points*tierMult);
+            ps.setString(7, loyaltyProgram.getLpCode());
+
+            int id1 = ps.executeUpdate();
+        
+            System.out.println(id1);
+    
+            if (id1 > 0) {
+                System.out.println("Activity recorded");
+            } else {
+                System.out.println("Row not found");
+            }
 
         } else if(activity.getActivityName().equals("Refer a Friend") || activity.getActivityName().equals("Refer a Friend")){
             System.out.println("Enter email of the person you are refering");
             String friendId = sc.nextLine();
             String getPointsForActivity = "select points,re_rule_code from re_rules where lp_code = '"+loyaltyProgram.getLpCode()+"' and ACT_CAT_CODE='A03'";
             result = statement.executeQuery(getPointsForActivity);
+            result.next();
             int points = result.getInt("Points");
             String recode = result.getString("re_rule_code");
             PreparedStatement ps = CustomerLanding.conn
-            .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,data_value,date_of_activity,re_rule_code,re_points) VALUES (?,?,?,?,?,?)");
+            .prepareStatement("INSERT INTO CUSTOMER_ACTIVITY_LOG(act_cat_code, cust_id,datavalue,date_of_activity,re_rule_code,re_points,lp_code) VALUES (?,?,?,?,?,?,?)");
             ps.setString(1, activity.getActivityCode());
             ps.setString(2, CustomerLanding.loggedInUser.getUser_Id());
             ps.setString(3, friendId);
@@ -436,6 +484,17 @@ public class CustomerLanding {
             ps.setTimestamp(4, new Timestamp(time));
             ps.setString(5, recode);
             ps.setInt(6, points*tierMult);
+            ps.setString(7, loyaltyProgram.getLpCode());
+
+            int id1 = ps.executeUpdate();
+        
+            System.out.println(id1);
+    
+            if (id1 > 0) {
+                System.out.println("Activity recorded");
+            } else {
+                System.out.println("Row not found");
+            }
         }
            
     }
@@ -443,6 +502,7 @@ public class CustomerLanding {
 
     
     static void rewardRedeeming(Connection conn,LoggedInUser loggedInUser) throws SQLException{
+        statement = conn.createStatement();
         int selection = 0;
         boolean flag = true;
         do {
@@ -466,6 +526,7 @@ public class CustomerLanding {
     }
     
     static void rewardSelect(Connection conn,LoggedInUser loggedInUser) throws SQLException{
+        statement = conn.createStatement();
         int selection = 0;
         boolean flag = true;
         ArrayList<Reward> rewards = new ArrayList<>();
@@ -474,6 +535,7 @@ public class CustomerLanding {
             // System.out.println(sqlCred);
             result = statement.executeQuery(getRewardsList);
             Reward reward = null;
+            rewards.clear();
             while (result.next()) {
                 reward = new Reward(result.getString("REWARD_CAT_CODE"), result.getString("REWARD_NAME"));
                 rewards.add(reward);
@@ -496,66 +558,9 @@ public class CustomerLanding {
     }
 
 
-    static void addPointsToWallet(LoggedInUser loggedInUser, int points, String lpCode){
-        try {
-            conn.setAutoCommit(false);
-            PreparedStatement ps = CustomerLanding.conn
-                    .prepareStatement("UPDATE CUST_WALLET SET CURRENT_POINTS = CURRENT_POINTS + ? WHERE WALLET_ID = ? AND LP_CODE = ?");
-            ps.setInt(1, points);
-            ps.setString(2, loggedInUser.getWalletId());
-            ps.setString(3, lpCode);
-            int id1 = ps.executeUpdate();
-            
-            System.out.println(id1);
-
-            if (id1 > 0) {
-                System.out.println("Current points updated");
-            } else {
-                System.out.println("Row not found");
-            }
-
-
-            PreparedStatement ps1 = CustomerLanding.conn
-            .prepareStatement("UPDATE CUST_WALLET SET POINTS_ACC = POINTS_ACC + ? WHERE WALLET_ID = ? AND LP_CODE = ?");
-            
-            ps1.setInt(1, points);
-            ps1.setString(2, loggedInUser.getWalletId());
-            ps1.setString(3, lpCode);
-            int id2 = ps.executeUpdate();
-
-            System.out.println(id2);
-
-          
-            if (id2 > 0) {
-                System.out.println("Points accumilated updated..");
-            } else {
-                System.out.println("row not fount");
-            }
-            conn.commit();  
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            if(conn!=null)
-            {
-            	try {
-            		System.out.println("Transaction is being rolled back");
-            		conn.rollback();                  //if any exception occurs rollback the transaction
-            	}catch(SQLException se)
-            	{
-            	se.printStackTrace();
-            	}
-            }
-        } finally{
-            try {
-				conn.setAutoCommit(true);       // set auto commit to true 
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-        }
-    }
-
+   
     static void redeemPoints(Connection conn,LoggedInUser loggedInUser) throws SQLException{
-
+        
         int selection = 0;
         Scanner sc = new Scanner(System.in);
         boolean flag = true;
@@ -629,7 +634,8 @@ public class CustomerLanding {
             do{
                 switch (selection) {
                     case 1:
-
+                        int temp = 1;
+                        while(temp<=count){
                         int curr_pts;
                         String sql01 = "SELECT current_points FROM cust_wallet WHERE cust_id = '"+loggedInUser.getUser_Id()+"' AND lp_code IN (SELECT lp_code FROM brand WHERE lp_name = '"+lp+"')";
                         ResultSet r1 = statement.executeQuery(sql01);
@@ -655,12 +661,15 @@ public class CustomerLanding {
                             String sql2 = "INSERT INTO customer_reward_log(reward_cat_code,cust_id, datavalue, date_of_reward, rr_rule_code, rr_points, lp_code, expirydate, isused) VALUES('"+main.getString("reward_cat_code")+"','"+loggedInUser.getUser_Id()+"','"+main.getString("datavalue")+"','"+dtf.format(now)+"','"+main.getString("rr_rule_code")+"','"+main.getString("points")+"','"+main.getString("lp_code")+"','"+dtf.format(exp)+"',0)"; 
                             //System.out.println(main.getString("reward_cat_code")+","+loggedInUser.getUser_Id()+","+main.getString("datavalue")+","+dtf.format(now)+","+main.getString("rr_rule_code")+","+main.getString("points")+","+dtf.format(exp));
                             ResultSet main1 = statement.executeQuery(sql2);
+                            temp++;
                             flag = false;
                         }
                         else{
                             System.out.println("\nYou dont have enought points to redeem the selected Reward! \n");
                             flag = false;
+                            break;
                         }
+                    }
   
                         break;
                     case 2:
@@ -674,8 +683,8 @@ public class CustomerLanding {
         }catch (Exception e) {
             e.printStackTrace();
         } finally {
-            close(result);
-            close(statement);
+            //close(result);
+            //close(statement);
         }
 
 
