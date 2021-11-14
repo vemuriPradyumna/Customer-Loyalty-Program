@@ -59,9 +59,11 @@ public class showQueries {
                     break;
                 case 6:
                     System.out.println("List customers of Brand01 that have redeemed at least twice.");
+                    Query6(showQueries.conn);
                     break;
                 case 7:
                     System.out.println("All brands where total number of points redeemed overall is less than 500 points");
+                    Query7(showQueries.conn);
                     break;   
                 case 8:
                     System.out.println("For Customer C0003, and Brand02, number of activities they have done in the period of 08/1/2021 and 9/30/2021.");     
@@ -148,10 +150,10 @@ public class showQueries {
 
         sc = new Scanner(System.in);
         showQueries.statement = conn.createStatement(); 
-        String sql = "";
+        String sql = "select crl.cust_id,c.customer_name from customer c, CUSTOMER_REWARD_LOG crl, brand b where c.customer_id = crl.cust_id and b.lp_code = crl.lp_code and b.brand_id = 'Brand01' group by crl.cust_id,c.customer_name having count(crl.cust_id) >=2";
         result = statement.executeQuery(sql);
         while(result.next()){
-            
+            System.out.println("Customer ID: "+result.getString("cust_id")+"\n"+"Customer Name: "+result.getString("customer_name")+"\n");
         }
     }
 
@@ -159,10 +161,10 @@ public class showQueries {
 
         sc = new Scanner(System.in);
         showQueries.statement = conn.createStatement(); 
-        String sql = "";
+        String sql = "select b.BRAND_ID, b.brand_name from brand b, RR_RULES rr where rr.lp_code = b.lp_code group by b.brand_id,b.brand_name having count(rr.points) <500";
         result = statement.executeQuery(sql);
         while(result.next()){
-            
+            System.out.println("Brand ID: "+result.getString("brand_id")+"\n"+"Brand Name: "+result.getString("brand_name")+"\n");
         }
     }
 
