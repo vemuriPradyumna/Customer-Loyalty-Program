@@ -107,7 +107,8 @@ public class showQueries {
         showQueries.statement = conn.createStatement();
         //String sql = "SELECT DISTINCT C.customer_id FROM customer C, cust_wallet C1 WHERE C.wallet_id = C1.wallet_id MINUS (SELECT C.customer_name FROM customer C WHERE C.wallet_id IN ( SELECT wallet_id FROM cust_wallet WHERE lp_code IN ( SELECT lp_code FROM brand WHERE brand_id IN ( SELECT brand_id FROM re_rules WHERE act_cat_code IN ( SELECT act_cat_code FROM customer_activity_log )))))";
         //String sql = "SELECT cust_id, lp_code FROM cust_wallet MINUS SELECT C.cust_id, C.lp_code FROM cust_wallet C WHERE C.cust_id IN (SELECT cust_id FROM customer_activity_log WHERE re_rule_code IN (SELECT re_rule_code FROM re_rules WHERE lp_code = C.lp_code ))";
-        String sql = "SELECT cust_id, lp_code FROM cust_wallet MINUS SELECT C.cust_id, C.lp_code FROM cust_wallet C WHERE C.cust_id IN (SELECT cust_id FROM customer_activity_log WHERE re_rule_code IN (SELECT re_rule_code FROM re_rules WHERE lp_code = C.lp_code ))";
+        //String sql = "SELECT cust_id, lp_code FROM cust_wallet MINUS SELECT C.cust_id, C.lp_code FROM cust_wallet C WHERE C.cust_id IN (SELECT cust_id FROM customer_activity_log WHERE re_rule_code IN (SELECT re_rule_code FROM re_rules WHERE lp_code = C.lp_code ))";
+        String sql = "SELECT DISTINCT cust_id, lp_code FROM cust_wallet MINUS SELECT DISTINCT cust_id, lp_code FROM customer_activity_log";
         result = statement.executeQuery(sql);
         while(result.next()){
               System.out.println("Customer ID: "+result.getString("cust_id")+"\n"+"Loyalty Program Code: "+result.getString("lp_code")+"\n");
